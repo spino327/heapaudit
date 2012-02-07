@@ -60,12 +60,10 @@ class HeapANEWARRAY extends HeapUtil {
         // STACK: [...|obj|obj|count]
         mv.visitLdcInsn(type);
         // STACK: [...|obj|obj|count|type]
-        mv.visitLdcInsn((long)-1);
-        // STACK: [...|obj|obj|count|type|size]
         mv.visitMethodInsn(Opcodes.INVOKESTATIC,
                            "com/foursquare/heapaudit/HeapUtil",
                            "record",
-                           "(Ljava/lang/Object;ILjava/lang/String;J)V");
+                           "(Ljava/lang/Object;ILjava/lang/String;)V");
         // STACK: [...|obj]
 
         if (HeapSettings.conditional) {

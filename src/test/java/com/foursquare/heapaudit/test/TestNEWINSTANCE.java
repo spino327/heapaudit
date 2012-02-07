@@ -11,13 +11,12 @@ public class TestNEWINSTANCE extends TestUtil {
 
     // Test allocation of objects via new-instance.
 
-    // NOTE: Is the following accounting incorrect?
-
     @Test public void NEWINSTANCE_1d() {
 
 	clear();
 
-	Object arrayL = Array.newInstance(TestChild.class, 3);
+	Object arrayL = Array.newInstance(TestChild.class,
+					  3);
 
 	assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
 			  3,
@@ -25,17 +24,17 @@ public class TestNEWINSTANCE extends TestUtil {
 
     }
 
-    // NOTE: Is the following accounting incorrect?
-
     @Test public void NEWINSTANCE_2d() {
 
 	clear();
 
-	Object arrayL = Array.newInstance(TestChild.class, 5, 7);
+	Object arrayL = Array.newInstance(TestChild.class,
+					  5,
+					  7);
 
 	assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
 			  35,
-			  32));
+			  280));
 
     }
     /*

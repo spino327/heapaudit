@@ -156,18 +156,23 @@ public abstract class HeapUtil {
 
             long overhead = 0;
 
-            int length = 0;
-
             Object[] o = (Object[])obj;
 
-            int count = o.length;
+            int length = o.length;
+
+            int count = length;
 
             for (int i = 1; i < type.length(); ++i) {
 
                 if (type.charAt(i) == '[') {
 
+                    // The following assumes the size of array of array,
+                    // including the overhead of the array bookkeeping itself
+                    // is only affected by the number of elements, not the
+                    // actual element type.
+
                     overhead += sizeOf(o,
-                                       "" + o.length + type.substring(i - 1));
+                                       "" + length + "[[L");
 
                     switch (type.charAt(i + 1)) {
 
@@ -229,7 +234,9 @@ public abstract class HeapUtil {
 
                         o = (Object[])(o[0]);
 
-                        count *= o.length;
+                        length = o.length;
+
+                        count *= length;
 
                     }
 
@@ -251,22 +258,58 @@ public abstract class HeapUtil {
 
     }
 
-    public static void record(Object obj,
-                              int[] dimensions,
-                              String type) {
-
-        int count = 1;
-
-        for (int i = 0; i < dimensions.length; ++i) {
-
-            count *= dimensions[i];
-
-        }
+    public static void record(Object obj, int count, String type) {
 
         record(obj,
                count,
                type,
-               -1);
+               sizeOf(obj,
+		      "" + count + "[" + type));
+
+    }
+
+    public static void record(Object obj,
+                              int[] dimensions,
+                              String type) {
+
+        long overhead = 0;
+
+        Object o[] = (Object[])obj;
+
+        int count = 1;
+
+        for (int i = 0; i < dimensions.length - 1 && count > 0; ++i) {
+
+            int length = dimensions[i];
+
+            if (length >= 0) {
+
+                // The following assumes the size of array of array, including
+                // the overhead of the array bookkeeping itself is only affected
+                // by the number of elements, not the actual element type.
+
+                overhead += sizeOf(o,
+                                   "" + length + "[[L");
+
+                o = (Object[])(o[0]);
+
+            }
+
+            count *= length;
+
+        }
+
+        if (count > 0) {
+
+            int length = dimensions[dimensions.length - 1];
+
+            record(obj,
+                   count * length,
+                   type,
+                   overhead + count * sizeOf(o,
+                                             "" + length + "[" + type));
+
+        }
 
     }
 
@@ -296,16 +339,20 @@ public abstract class HeapUtil {
 
     public static boolean inject(String id) {
 
-        if (!recorders.containsKey(id)) {
+        if (recorders.containsKey(id)) {
 
-            recorders.put(id,
-                          new HeapQuantile());
+            //log("Recorder already exists for " + id);
 
-            return true;
+            return false;
 
         }
 
-        return false;
+        log("Injecting recorder for " + id);
+
+        recorders.put(id,
+                      new HeapQuantile());
+
+        return true;
 
     }
 
@@ -313,15 +360,21 @@ public abstract class HeapUtil {
 
         HeapQuantile recorder = recorders.remove(id);
 
-        if (recorder != null) {
+        if (recorder == null) {
 
-            System.out.println(recorder.summarize(true, id));
+            
+            //log("Recorder does not exist for " + id);
 
-            return true;
+            return false;
 
         }
 
-        return false;
+        log("Removing recorder for " + id);
+
+        System.out.println(recorder.summarize(true,
+                                              id));
+
+        return true;
 
     }
 

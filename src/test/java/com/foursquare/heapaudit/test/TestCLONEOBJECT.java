@@ -18,7 +18,7 @@ public class TestCLONEOBJECT extends TestUtil {
 
 	assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
 			  -1,
-			  56));
+			  16));
 
     }
 
