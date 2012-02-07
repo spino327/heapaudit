@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
+// When loaded statically via the java command line as a java agent, the main
+// entry point is HeapAudit.premain(). When loaded dynamically, the java command
+// line first invokes HeapAudit.main() which then causes the JVM to load the
+// java agent (the same jar file) into the target process.
+
 public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
     static {
@@ -25,6 +30,9 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             });
         */
     }
+
+    // The following is the wrapper that instructs JVM to load the java agent
+    // into the designated target process.
 
     public static void main(String[] args) throws Exception {
 
@@ -43,6 +51,9 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
     }
 
+    // The following attaches to the specified process and loads the java agent,
+    // which happens to be the same jar file itself.
+
     public static void load(String pid,
                             String args) throws Exception {
 
@@ -55,27 +66,35 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
     }
 
+    // The following is the entry point when loaded dynamically to inject or
+    // remove recorders from the target process. 
+
     public static void agentmain(String args,
                                  Instrumentation instrumentation) throws UnmodifiableClassException {
 
-        main(args,
-             instrumentation,
-             true);
+        instrument(args,
+                   instrumentation,
+                   true);
 
     }
+
+    // The following is the entry point when loaded as a java agent along with
+    // the target process on the java command line.
 
     public static void premain(String args,
                                Instrumentation instrumentation) throws UnmodifiableClassException {
 
-        main(args,
-             instrumentation,
-             false);
+        instrument(args,
+                   instrumentation,
+                   false);
 
     }
 
-    private static void main(String args,
-                             Instrumentation instrumentation,
-                             boolean dynamic) throws UnmodifiableClassException {
+    // The following is the implementation for instrumenting the target code.
+
+    private static void instrument(String args,
+                                   Instrumentation instrumentation,
+                                   boolean dynamic) throws UnmodifiableClassException {
 
         HeapSettings.parse(args,
                            dynamic);

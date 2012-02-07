@@ -8,7 +8,9 @@ HeapAudit runs in two modes:
 process of interest. The callback hook defines how the allocations are recorded
 and the callback code is only executed when the java agent is loaded.
 - DYNAMIC: This injects HeapQuantile recorders to all matching methods and dumps
-heap allocations to stdout when removed.
+heap allocations to stdout when removed. Be aware, a lot of recorders, including
+nested ones, may be injected if the supplied matching pattern is not restrictive
+enough.
 
 ## Building the HeapAudit java agent
 
@@ -22,8 +24,10 @@ The built jar will be in 'target/'.
 
 Currently, two recorders are provided with HeapAudit:
 
-- [HeapActivity](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapActivity.java) prints each heap allocation to stdout
-- [HeapQuantile](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapQuantile.java) accumulates allocations and dumps out summary at the end
+- [HeapActivity](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapActivity.java)
+prints each heap allocation to stdout as they occur
+- [HeapQuantile](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapQuantile.java)
+accumulates allocations and dumps out summary at the end
 
 Both of the above inherit from the base class HeapRecorder. Additional recording
 behavior can be extended by implementing the record method in [HeapRecorder](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapRecorder.java).
@@ -41,16 +45,34 @@ behavior can be extended by implementing the record method in [HeapRecorder](htt
 
 	}
 
+## Registering the HeapAudit recorder
+
 Recording starts when it is registered and stops when it is unregistered. Each
 recorder can be registered globally across all threads or local to the current.
+The following example shows how to register the HeapActivity recorder across all
+threads. The output will display as allocations occur.
 
-	MyRecorder r = new MyRecorder();
+	HeapActivity r = new HeapActivity();
+
+	HeapRecorder.register(r, true);
+
+	MyObject o = new MyObject();
+
+	HeapRecorder.unregister(r, true);
+
+The HeapQuantile recorder requires an extra step at the end to tally up the
+results. The following example shows how to register the HeapQuantile recorder
+only on the current thread and displays the summary at the end.
+
+	HeapQuantile r = new HeapQuantile();
 
 	HeapRecorder.register(r, false);
 
 	MyObject o = new MyObject();
 
 	HeapRecorder.unregister(r, false);
+
+	for (HeapQuantile.Stats s: r.tally(false, true)) System.out.println(s);
 
 ## Launching the HeapAudit java agent
 
@@ -59,8 +81,9 @@ to implement the integration hook to register heap recorders).
 
 	$ java -javaagent:heapaudit.jar MyTest
 
-Launch HeapAudit dynamically by attaching to the process of interest (does not
-require MyTest to have any prior intrumentations).
+Launch HeapAudit dynamically by injecting to the process of interest (does not
+require MyTest to have any prior intrumentations) and later removing the
+recorder. The recorder data is dumped to the console once removed.
 
 	$ java -jar heapaudit.jar 999 -Icom/foursquare/test/MyTest@test.+
 
@@ -71,6 +94,8 @@ launching within JRE, specify the -Xbootclasspath command line arg to point to
 the tools.jar file.
 
 	$ java -Xbootclasspath/a:/usr/local/lib/tools.jar -jar heapaudit.jar 999 -Icom/foursquare/test/MyTest@test.+
+
+	$ java -Xbootclasspath/a:/usr/local/lib/tools.jar -jar heapaudit.jar 999 -Rcom/foursquare/test/MyTest@test.+
 
 Additional options can be passed to HeapAudit to customize which classes and/or
 methods are not to be instrumented for recording allocations. For additional
