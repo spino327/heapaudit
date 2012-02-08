@@ -103,6 +103,25 @@ information on how to specify the options, see [HeapSettings.java](https://githu
 
 	$ java -javaagent:heapaudit.jar="-Acom/foursquare/test/.+" MyTest
 
+## Troubleshooting
+
+Some libraries may not be instrumentable. This often manifests in some useless
+error while instrumenting the target code, i.e. some generic error in the form
+of a java.lang.NoClassDefFoundError exception. While some of the errors may be
+attributed to bugs in HeapAudit, this should not block you from auditing the
+rest of your code.
+
+To identify the offending library, run with "-D.+" and search for the last line
+of the debug output that starts with the word CLASS. You can subsequently avoid
+instrumenting the identified class via the -A flag.
+
+For instance, we recently switched to use jrockit JVM and it would not run with
+HeapAudit attached. Upon troubleshooting with "-D.+", we noticed that many of
+the classes under the jrockit/ namespace causes exception to be thrown during
+startup. We subsequently ran HeapAudit with "-Ajrockit/.+" and everything
+returned back to normal. See [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java)
+for list of namespaces avoided by default.
+
 ## Dependencies
 
 - [ASM](http://asm.ow2.org/)

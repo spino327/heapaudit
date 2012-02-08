@@ -1,21 +1,24 @@
 package com.foursquare.heapaudit;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 class HeapSettings {
 
     public static void parse(String args,
-                             boolean dynamic) {
+                             boolean dynamic) throws FileNotFoundException {
 
         // The following describes how to specify the args string.
         // 
-        //   Syntax for args: [ -Xconditional |
-        //                      -A<path> |
+        //   Syntax for args: [ -Xconditional ]
+        //                    [ -O<file> ]
+        //                    [ -A<path> |
         //                      -D<path> |
         //                      -T<path> |
         //                      -I<path> |
-        //                      -R<path> ]
+        //                      -R<path> ]*
         //
         //   Syntax for path: <class_regex>[@<method_regex>]
         //
@@ -24,6 +27,8 @@ class HeapSettings {
         //     extra if-statements to short-circuit the recording logic.
         //     However, if recorders are expected to be mostly present, then
         //     including extra if-statements adds extra execution instructions.
+        //
+        //   * Use -O to redirect the output to the designated file.
         //
         //   * Use -A to avoid auditing a particular path.
         //   * Use -D to debug instrumentation of a particular path.
@@ -99,13 +104,19 @@ class HeapSettings {
 
                 switch (arg.charAt(1)) {
 
-                case 'X' :
+                case 'X':
 
                     if (value.equals("conditional")) {
 
                         conditional = true;
 
                     }
+
+                    break;
+
+                case 'O':
+
+                    output = value.length() > 0 ? new PrintStream(value) : System.out;
 
                     break;
 
@@ -163,6 +174,8 @@ class HeapSettings {
     // false can avoid the checks.
 
     public static boolean conditional = true;
+
+    public static PrintStream output = System.out;
 
     private final static ArrayList<Pattern> toAvoidAuditing = new ArrayList<Pattern>();
 

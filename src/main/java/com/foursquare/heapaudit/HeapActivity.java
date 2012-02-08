@@ -14,7 +14,7 @@ public class HeapActivity extends HeapRecorder {
 
         }
 
-        System.out.println("new " + type + length + " (" + size + " bytes)");
+        HeapSettings.output.println("new " + type + length + " (" + size + " bytes)");
 
     }
 

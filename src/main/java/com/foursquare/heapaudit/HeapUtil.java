@@ -11,7 +11,7 @@ public abstract class HeapUtil {
 
     public static void log(String text) {
 
-        System.out.println(text);
+        HeapSettings.output.println(text);
 
     }
 
@@ -341,13 +341,13 @@ public abstract class HeapUtil {
 
         if (recorders.containsKey(id)) {
 
-            //log("Recorder already exists for " + id);
+            log("Recorder already exists for " + id);
 
             return false;
 
         }
 
-        log("Injecting recorder for " + id);
+        log(id);
 
         recorders.put(id,
                       new HeapQuantile());
@@ -362,17 +362,14 @@ public abstract class HeapUtil {
 
         if (recorder == null) {
 
-            
-            //log("Recorder does not exist for " + id);
+            log("Recorder does not exist for " + id);
 
             return false;
 
         }
 
-        log("Removing recorder for " + id);
-
-        System.out.println(recorder.summarize(true,
-                                              id));
+        HeapSettings.output.println(recorder.summarize(true,
+                                                       id));
 
         return true;
 
