@@ -12,13 +12,18 @@ heap allocations to stdout when removed. Be aware, a lot of recorders, including
 nested ones, may be injected if the supplied matching pattern is not restrictive
 enough.
 
-## Building the HeapAudit java agent
+## Building and testing the HeapAudit java agent
 
 Build project with Maven:
 
 	$ mvn clean package
 
 The built jar will be in 'target/'.
+
+Because the included tests must be executed with the java agent attached, they
+must run in the verify phase instead of in the test phase as unit tests:
+
+	$ mvn verify
 
 ## Implementing the HeapAudit hook
 
