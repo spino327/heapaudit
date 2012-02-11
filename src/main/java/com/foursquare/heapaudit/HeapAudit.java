@@ -158,10 +158,12 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
         ClassFileTransformer transformer = new HeapAudit();
 
-        instrumentation.addTransformer(transformer,
-                                       true);
+        boolean canRetransform = instrumentation.isRetransformClassesSupported();
 
-        if (instrumentation.isRetransformClassesSupported()) {
+        instrumentation.addTransformer(transformer,
+                                       canRetransform);
+
+        if (canRetransform) {
 
             ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 
@@ -195,25 +197,27 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
                             ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) {
 
-        if (HeapSettings.shouldAvoidAuditing(className, null) &&
-            !HeapSettings.shouldInjectRecorder(className, null) &&
-            !HeapSettings.shouldRemoveRecorder(className, null)) {
+        byte[] buffer = null;
 
-            return null;
+        if (!HeapSettings.shouldAvoidAuditing(className, null) ||
+            HeapSettings.shouldInjectRecorder(className, null) ||
+            HeapSettings.shouldRemoveRecorder(className, null)) {
+
+            ClassReader cr = new ClassReader(classfileBuffer);
+
+            ClassWriter cw = new ClassWriter(cr,
+                                             ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+
+            cr.accept(new HeapClass(cw,
+                                    className,
+                                    HeapSettings.shouldDebugAuditing(className, null)),
+                      ClassReader.SKIP_FRAMES);
+
+            buffer = cw.toByteArray();
 
         }
 
-        ClassReader cr = new ClassReader(classfileBuffer);
-
-        ClassWriter cw = new ClassWriter(cr,
-                                         ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-
-        cr.accept(new HeapClass(cw,
-                                className,
-                                HeapSettings.shouldDebugAuditing(className, null)),
-                  ClassReader.SKIP_FRAMES);
-
-        return cw.toByteArray();
+        return buffer;
 
     }
 

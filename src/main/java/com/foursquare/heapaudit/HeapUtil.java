@@ -82,6 +82,40 @@ public abstract class HeapUtil {
 
     }
 
+    // This is a per thread status to ignore allocations performed within the
+    // record code path.
+
+    private static ThreadLocal<Integer> recording = new ThreadLocal<Integer>() {
+
+        @Override protected Integer initialValue() {
+
+            return 0;
+
+        }
+
+    };
+
+    // The following suppresses recording of allocations due to the
+    // HeapAudit library itself to avoid being caught in an infinite loop.
+
+    public static boolean suppress() {
+
+        int index = recording.get();
+
+        recording.set(index + 1);
+
+        return index == 0;
+
+    }
+
+    // The following rewinds the nested calls that suppressed of recordings.
+
+    public static void rewind() {
+
+        recording.set(recording.get() - 1);
+
+    }
+
     // The following holds a cache of type to size mappings.
 
     private static ConcurrentHashMap<String, Long> sizes = new ConcurrentHashMap<String, Long>();
@@ -104,40 +138,27 @@ public abstract class HeapUtil {
 
     }
 
-    // This is a per thread status to ignore allocations performed within the
-    // record code path.
-
-    private static ThreadLocal<Integer> recording = new ThreadLocal<Integer>() {
-
-        @Override protected Integer initialValue() {
-
-            return 0;
-
-        }
-
-    };
-
     public static void record(Object obj,
                               int count,
                               String type,
                               long size) {
 
-        // The following suppresses recording of allocations due to the
-        // HeapAudit library itself to avoid being caught in an infinite loop.
+        if (suppress()) {
 
-        int index = recording.get();
-
-        recording.set(index + 1);
-
-        if (index == 0) {
+            size = size < 0 ? sizeOf(obj,
+                                     type) : size;
+            rewind();
 
             record(count,
                    type,
-                   size < 0 ? sizeOf(obj, type) : size);
+                   size);
 
         }
+        else {
 
-        recording.set(index);
+            rewind();
+
+        }
 
     }
 
@@ -152,7 +173,7 @@ public abstract class HeapUtil {
                    -1);
 
         }
-        else {
+        else if (suppress()) {
 
             long overhead = 0;
 
@@ -243,11 +264,17 @@ public abstract class HeapUtil {
                 }
                 else {
 
+                    String name = type.substring(i);
+
+                    long size = overhead + count * sizeOf(o[0],
+                                                          "" + length + type.substring(i - 1));
+
+                    rewind();
+
                     record(obj,
                            count * length,
-                           type.substring(i),
-                           overhead + count * sizeOf(o[0],
-                                                     "" + length + type.substring(i - 1)));
+                           name,
+                           size);
 
                     break;
                 }
@@ -255,59 +282,96 @@ public abstract class HeapUtil {
             }
 
         }
+        else {
+
+            rewind();
+
+        }
 
     }
 
-    public static void record(Object obj, int count, String type) {
+    public static void record(Object obj,
+                              int count,
+                              String type) {
 
-        record(obj,
-               count,
-               type,
-               sizeOf(obj,
-		      "" + count + "[" + type));
+        if (suppress()) {
+
+            long size = sizeOf(obj,
+                               "" + count + "[" + type);
+
+            rewind();
+
+            record(obj,
+                   count,
+                   type,
+                   size);
+
+        }
+        else {
+
+            rewind();
+
+        }
 
     }
 
     public static void record(Object obj,
                               int[] dimensions,
                               String type) {
+	if (suppress()) {
 
-        long overhead = 0;
+            long overhead = 0;
 
-        Object o[] = (Object[])obj;
+            Object o[] = (Object[])obj;
 
-        int count = 1;
+            int count = 1;
 
-        for (int i = 0; i < dimensions.length - 1 && count > 0; ++i) {
+            for (int i = 0; i < dimensions.length - 1 && count > 0; ++i) {
 
-            int length = dimensions[i];
+                int length = dimensions[i];
 
-            if (length >= 0) {
+                if (length >= 0) {
 
-                // The following assumes the size of array of array, including
-                // the overhead of the array bookkeeping itself is only affected
-                // by the number of elements, not the actual element type.
+                    // The following assumes the size of array of array, including
+                    // the overhead of the array bookkeeping itself is only affected
+                    // by the number of elements, not the actual element type.
 
-                overhead += sizeOf(o,
-                                   "" + length + "[[L");
+                    overhead += sizeOf(o,
+                                       "" + length + "[[L");
 
-                o = (Object[])(o[0]);
+                    o = (Object[])(o[0]);
+
+                }
+
+                count *= length;
 
             }
 
-            count *= length;
+            if (count > 0) {
+
+                int length = dimensions[dimensions.length - 1];
+
+                long size = overhead + count * sizeOf(o,
+                                                      "" + length + "[" + type);
+
+                rewind();
+
+                record(obj,
+                       count * length,
+                       type,
+                       size);
+
+            }
+            else {
+
+                rewind();
+
+            }
 
         }
+        else {
 
-        if (count > 0) {
-
-            int length = dimensions[dimensions.length - 1];
-
-            record(obj,
-                   count * length,
-                   type,
-                   overhead + count * sizeOf(o,
-                                             "" + length + "[" + type));
+            rewind();
 
         }
 
@@ -317,27 +381,35 @@ public abstract class HeapUtil {
                               String type,
                               long size) {
 
-        try {
+        if (suppress()) {
 
-            for (HeapRecorder recorder: HeapRecorder.getRecorders()) {
+            try {
 
-                recorder.record(type,
-                                count,
-                                size);
+                for (HeapRecorder recorder: HeapRecorder.getRecorders()) {
+
+                    recorder.record(type,
+                                    count,
+                                    size);
+
+                }
+
+            } catch (Exception e) {
+
+                System.err.println(e);
 
             }
 
-        } catch (Exception e) {
-
-            System.err.println(e);
-
         }
+
+        rewind();
 
     }
 
     private final static HashMap<String, HeapQuantile> recorders = new HashMap<String, HeapQuantile>();
 
     public static boolean inject(String id) {
+
+        suppress();
 
         if (recorders.containsKey(id)) {
 
@@ -352,11 +424,15 @@ public abstract class HeapUtil {
         recorders.put(id,
                       new HeapQuantile());
 
+        rewind();
+
         return true;
 
     }
 
     public static boolean remove(String id) {
+
+        suppress();
 
         HeapQuantile recorder = recorders.remove(id);
 
@@ -371,11 +447,15 @@ public abstract class HeapUtil {
         HeapSettings.output.println(recorder.summarize(true,
                                                        id));
 
+        rewind();
+
         return true;
 
     }
 
     public static void register(String id) {
+
+        suppress();
 
         HeapQuantile recorder = recorders.get(id);
 
@@ -385,9 +465,13 @@ public abstract class HeapUtil {
 
         }
 
+        rewind();
+
     }
 
     public static void unregister(String id) {
+
+        suppress();
 
         HeapQuantile recorder = recorders.get(id);
 
@@ -396,6 +480,8 @@ public abstract class HeapUtil {
             HeapRecorder.unregister(recorder);
 
         }
+
+        rewind();
 
     }
 

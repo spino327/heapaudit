@@ -161,7 +161,7 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                                       desc,
                                                       signature,
                                                       exceptions),
-                                       id + '/' + method,
+                                       id + '@' + method,
                                        debugAuditing,
                                        traceAuditing,
                                        injectRecorder,
