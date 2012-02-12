@@ -1,9 +1,16 @@
 package com.foursquare.heapaudit;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayList;
 
 public abstract class HeapRecorder {
+
+    // Use the following annotation to suppress HeapAudit from recording
+    // allocations caused by the annotated method directly and indirectly.
+
+    public @Retention(RetentionPolicy.RUNTIME) @interface Suppress { }
 
     abstract public void record(String type,
                                 int count,

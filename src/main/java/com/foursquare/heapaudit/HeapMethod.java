@@ -11,6 +11,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public HeapMethod(MethodVisitor mv,
                       String methodId,
+                      boolean suppressAuditing,
                       boolean debugAuditing,
                       boolean traceAuditing,
                       boolean injectRecorder,
@@ -19,6 +20,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         this.mv = new MethodAdapter(mv);
 
         this.id = methodId;
+
+        this.suppressAuditing = suppressAuditing;
 
         this.debugAuditing = debugAuditing;
 
@@ -48,6 +51,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     private final String id;
 
+    private boolean suppressAuditing;
+
     private final boolean debugAuditing;
 
     private final boolean traceAuditing;
@@ -71,7 +76,13 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                              boolean visible) {
 
         instrumentation(debugAuditing,
-                        "visitAnnotation()");
+                        "visitAnnotation(" + desc + ", " + visible + ")");
+
+        if (desc.equals("Lcom/foursquare/heapaudit/HeapRecorder$Suppress;")) {
+
+            suppressAuditing = true;
+
+        }
 
         return mv.visitAnnotation(desc,
                                   visible);
@@ -687,7 +698,19 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     private void visitEnter() {
 
-        if (injectRecorder) {
+        if (suppressAuditing) {
+
+            // STACK: [...]
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                               "com/foursquare/heapaudit/HeapUtil",
+                               "suppress",
+                               "()Z");
+            // STACK: [...|status]
+            mv.visitInsn(Opcodes.POP);
+            // STACK: [...]
+
+        }
+        else if (injectRecorder) {
 
             // STACK: [...]
             mv.visitLdcInsn(id);
@@ -704,7 +727,19 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     private void visitReturn() {
 
-        if (injectRecorder) {
+        if (suppressAuditing) {
+
+            // STACK: [...]
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC,
+                               "com/foursquare/heapaudit/HeapUtil",
+                               "unwind",
+                               "()Z");
+            // STACK: [...|status]
+            mv.visitInsn(Opcodes.POP);
+            // STACK: [...]
+
+        }
+        else if (injectRecorder) {
 
             // STACK: [...]
             mv.visitLdcInsn(id);

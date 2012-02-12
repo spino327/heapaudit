@@ -210,6 +210,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
             cr.accept(new HeapClass(cw,
                                     className,
+                                    HeapSettings.shouldSuppressAuditing(className, null),
                                     HeapSettings.shouldDebugAuditing(className, null)),
                       ClassReader.SKIP_FRAMES);
 

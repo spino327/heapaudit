@@ -97,6 +97,7 @@ public abstract class HeapUtil {
 
     // The following suppresses recording of allocations due to the
     // HeapAudit library itself to avoid being caught in an infinite loop.
+    // Returns true if caller is the first in the nested sequence.
 
     public static boolean suppress() {
 
@@ -108,11 +109,16 @@ public abstract class HeapUtil {
 
     }
 
-    // The following rewinds the nested calls that suppressed of recordings.
+    // The following unwinds the nested calls that suppressed of recordings.
+    // Returns true if caller is the first in the nested sequence.
 
-    public static void rewind() {
+    public static boolean unwind() {
 
-        recording.set(recording.get() - 1);
+        int index = recording.get() - 1;
+
+        recording.set(index);
+
+        return index == 0;
 
     }
 
@@ -147,7 +153,7 @@ public abstract class HeapUtil {
 
             size = size < 0 ? sizeOf(obj,
                                      type) : size;
-            rewind();
+            unwind();
 
             record(count,
                    type,
@@ -156,7 +162,7 @@ public abstract class HeapUtil {
         }
         else {
 
-            rewind();
+            unwind();
 
         }
 
@@ -269,7 +275,7 @@ public abstract class HeapUtil {
                     long size = overhead + count * sizeOf(o[0],
                                                           "" + length + type.substring(i - 1));
 
-                    rewind();
+                    unwind();
 
                     record(obj,
                            count * length,
@@ -284,7 +290,7 @@ public abstract class HeapUtil {
         }
         else {
 
-            rewind();
+            unwind();
 
         }
 
@@ -299,7 +305,7 @@ public abstract class HeapUtil {
             long size = sizeOf(obj,
                                "" + count + "[" + type);
 
-            rewind();
+            unwind();
 
             record(obj,
                    count,
@@ -309,7 +315,7 @@ public abstract class HeapUtil {
         }
         else {
 
-            rewind();
+            unwind();
 
         }
 
@@ -354,7 +360,7 @@ public abstract class HeapUtil {
                 long size = overhead + count * sizeOf(o,
                                                       "" + length + "[" + type);
 
-                rewind();
+                unwind();
 
                 record(obj,
                        count * length,
@@ -364,14 +370,14 @@ public abstract class HeapUtil {
             }
             else {
 
-                rewind();
+                unwind();
 
             }
 
         }
         else {
 
-            rewind();
+            unwind();
 
         }
 
@@ -401,7 +407,7 @@ public abstract class HeapUtil {
 
         }
 
-        rewind();
+        unwind();
 
     }
 
@@ -424,7 +430,7 @@ public abstract class HeapUtil {
         recorders.put(id,
                       new HeapQuantile());
 
-        rewind();
+        unwind();
 
         return true;
 
@@ -447,7 +453,7 @@ public abstract class HeapUtil {
         HeapSettings.output.println(recorder.summarize(true,
                                                        id));
 
-        rewind();
+        unwind();
 
         return true;
 
@@ -465,7 +471,7 @@ public abstract class HeapUtil {
 
         }
 
-        rewind();
+        unwind();
 
     }
 
@@ -481,7 +487,7 @@ public abstract class HeapUtil {
 
         }
 
-        rewind();
+        unwind();
 
     }
 

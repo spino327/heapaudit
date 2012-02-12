@@ -14,7 +14,8 @@ class HeapSettings {
         // 
         //   Syntax for args: [ -Xconditional ]
         //                    [ -O<file> ]
-        //                    [ -A<path> |
+        //                    [ -S<path> |
+        //                      -A<path> |
         //                      -D<path> |
         //                      -T<path> |
         //                      -I<path> |
@@ -30,6 +31,7 @@ class HeapSettings {
         //
         //   * Use -O to redirect the output to the designated file.
         //
+        //   * Use -S to suppress auditing a particular path and its sub calls.
         //   * Use -A to avoid auditing a particular path.
         //   * Use -D to debug instrumentation of a particular path.
         //   * Use -T to trace execution of auditing a particular path.
@@ -54,6 +56,11 @@ class HeapSettings {
         //     the class com/foursquare/MyTest
         //       -Icom/foursquare/MyTest@toString.+
         //
+        //   The -S option is more applicable to general scenarios over the -A
+        //   option. The former suppresses the entire sub call tree as oppose to
+        //   only skipping the designated class or method. The latter will still
+        //   include the indirect allocations down the callstack.
+        //
         //   The -D and -T options are normally used for HeapAudit development
         //   purposes only.
         //
@@ -63,6 +70,8 @@ class HeapSettings {
         //   the designated method, including sub-method calls.
 
         HeapSettings.dynamic = dynamic;
+
+        toSuppressAuditing.clear();
 
         toAvoidAuditing.clear();
 
@@ -120,6 +129,12 @@ class HeapSettings {
 
                     break;
 
+                case 'S':
+
+                    toSuppressAuditing.add(new Pattern(value));
+
+                    break;
+
                 case 'A':
 
                     toAvoidAuditing.add(new Pattern(value));
@@ -173,9 +188,11 @@ class HeapSettings {
     // always have at least one recorder present, then setting conditional to
     // false can avoid the checks.
 
-    public static boolean conditional = true;
+    public static boolean conditional = false;
 
     public static PrintStream output = System.out;
+
+    private final static ArrayList<Pattern> toSuppressAuditing = new ArrayList<Pattern>();
 
     private final static ArrayList<Pattern> toAvoidAuditing = new ArrayList<Pattern>();
 
@@ -208,6 +225,15 @@ class HeapSettings {
         }
 
         return false;
+
+    }
+
+    public static boolean shouldSuppressAuditing(String classPath,
+                                                 String methodName) {
+
+        return should(toSuppressAuditing,
+                      classPath,
+                      methodName);
 
     }
 

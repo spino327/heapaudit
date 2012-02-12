@@ -11,11 +11,14 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
     public HeapClass(ClassVisitor cv,
                      String classId,
+                     boolean suppressAuditing,
                      boolean debugAuditing) {
 
         this.cv = new ClassAdapter(cv);
 
         this.id = classId;
+
+        this.suppressClass = suppressAuditing;
 
         this.debugClass = debugAuditing;
 
@@ -27,6 +30,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
     private final ClassAdapter cv;
 
     private final String id;
+
+    private boolean suppressClass;
 
     private final boolean debugClass;
 
@@ -77,7 +82,13 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                              boolean visible) {
 
         instrumentation(debugClass,
-                        "visitAnnotation()");
+                        "visitAnnotation(" + desc + ", " + visible + ")");
+
+        if (desc.equals("Lcom/foursquare/heapaudit/HeapRecorder$Suppress;")) {
+
+            suppressClass = true;
+
+        }
 
         return cv.visitAnnotation(desc,
                                   visible);
@@ -136,6 +147,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
         String method = name + desc;
 
+        boolean suppressAuditing = suppressClass || HeapSettings.shouldSuppressAuditing(id, method);
+
         boolean debugAuditing = HeapSettings.shouldDebugAuditing(id, method);
 
         boolean traceAuditing = HeapSettings.shouldTraceAuditing(id, method);
@@ -162,6 +175,7 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                                       signature,
                                                       exceptions),
                                        id + '@' + method,
+                                       suppressAuditing,
                                        debugAuditing,
                                        traceAuditing,
                                        injectRecorder,
