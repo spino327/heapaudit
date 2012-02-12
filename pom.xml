@@ -46,7 +46,14 @@
         <version>2.3.2</version>
         <configuration>
           <archive>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+            <manifestEntries>
+              <Can-Redefine-Classes>true</Can-Redefine-Classes>
+              <Can-Retransform-Classes>true</Can-Retransform-Classes>
+              <Boot-Class-Path>${artifactId}-${version}.jar</Boot-Class-Path>
+              <Main-Class>com.foursquare.heapaudit.HeapAudit</Main-Class>
+              <Agent-Class>com.foursquare.heapaudit.HeapAudit</Agent-Class>
+              <Premain-Class>com.foursquare.heapaudit.HeapAudit</Premain-Class>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
