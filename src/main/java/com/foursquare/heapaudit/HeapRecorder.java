@@ -69,27 +69,56 @@ public abstract class HeapRecorder {
 
     private static ArrayList<HeapRecorder> globalRecorders = new ArrayList<HeapRecorder>();
 
-    private static ThreadLocal<ArrayList<HeapRecorder>> localRecorders = new ThreadLocal<ArrayList<HeapRecorder>>() {
+    private static ThreadLocal<NestedRecorders> localRecorders = new ThreadLocal<NestedRecorders>() {
 
-        @Override protected ArrayList<HeapRecorder> initialValue() {
+        @Override protected NestedRecorders initialValue() {
 
-            return new ArrayList<HeapRecorder>();
+            return new NestedRecorders();
 
         }
 
     };
 
-    public static boolean hasRecorders() {
+    // The following suppresses recording of allocations due to the
+    // HeapAudit library itself to avoid being caught in an infinite loop.
+    // Returns non-null context if caller is the first in the nested sequence.
 
-        return (localRecorders.get().size() > 0) || (globalRecorders.size() > 0);
+    public static Object suppress() {
+
+        NestedRecorders recorders = localRecorders.get();
+
+        return (recorders.level++ == 0) ? recorders.context : null;
 
     }
 
-    public static ArrayList<HeapRecorder> getRecorders() {
+    // The following unwinds the nested calls that suppressed of recordings.
+    // Returns true if caller is the first in the nested sequence.
+
+    public static Object unwind() {
+
+        NestedRecorders recorders = localRecorders.get();
+
+        return (--recorders.level == 0) ? recorders.context : null;
+
+    }
+
+    public static boolean hasRecorders() {
+
+        return hasRecorders(localRecorders.get().context);
+
+    }
+
+    public static boolean hasRecorders(Object context) {
+
+        return (((ArrayList<HeapRecorder>)context).size() > 0) || (globalRecorders.size() > 0);
+
+    }
+
+    public static ArrayList<HeapRecorder> getRecorders(Object context) {
 
         ArrayList<HeapRecorder> recorders = new ArrayList<HeapRecorder>(globalRecorders);
 
-        recorders.addAll(localRecorders.get());
+        recorders.addAll((ArrayList<HeapRecorder>)context);
 
         return recorders;
 
@@ -125,7 +154,7 @@ public abstract class HeapRecorder {
         }
         else {
 
-            localRecorders.get().add(recorder);
+            localRecorders.get().context.add(recorder);
 
         }
 
@@ -141,10 +170,18 @@ public abstract class HeapRecorder {
         }
         else {
 
-            localRecorders.get().remove(recorder);
+            localRecorders.get().context.remove(recorder);
 
         }
 
     }
+
+}
+
+class NestedRecorders {
+
+    public int level = 0;
+
+    public ArrayList<HeapRecorder> context = new ArrayList<HeapRecorder>();
 
 }

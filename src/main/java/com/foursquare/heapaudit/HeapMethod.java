@@ -702,10 +702,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
             // STACK: [...]
             mv.visitMethodInsn(Opcodes.INVOKESTATIC,
-                               "com/foursquare/heapaudit/HeapUtil",
+                               "com/foursquare/heapaudit/HeapRecorder",
                                "suppress",
-                               "()Z");
-            // STACK: [...|status]
+                               "()Ljava/lang/Object;");
+            // STACK: [...|context]
             mv.visitInsn(Opcodes.POP);
             // STACK: [...]
 
@@ -731,10 +731,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
             // STACK: [...]
             mv.visitMethodInsn(Opcodes.INVOKESTATIC,
-                               "com/foursquare/heapaudit/HeapUtil",
+                               "com/foursquare/heapaudit/HeapRecorder",
                                "unwind",
-                               "()Z");
-            // STACK: [...|status]
+                               "()Ljava/lang/Object;");
+            // STACK: [...|context]
             mv.visitInsn(Opcodes.POP);
             // STACK: [...]
 
