@@ -109,22 +109,22 @@ public abstract class HeapUtil {
                               String type,
                               long size) {
 
-        if (HeapRecorder.suppress() != null) {
+        if (size < 0) {
 
-            size = size < 0 ? sizeOf(obj,
-                                     type) : size;
-            HeapRecorder.unwind();
+            if (HeapRecorder.suppress() != null) {
 
-            record(count,
-                   type,
-                   size);
+                size = sizeOf(obj,
+                              "" + count + type);
 
-        }
-        else {
+            }
 
             HeapRecorder.unwind();
 
         }
+
+        record(count,
+               type,
+               size);
 
     }
 
