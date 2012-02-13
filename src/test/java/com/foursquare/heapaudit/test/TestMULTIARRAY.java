@@ -18,6 +18,8 @@ public class TestMULTIARRAY extends TestUtil {
 			  15,
 			  152));
 
+	assertTrue(empty());
+
     }
 
     @Test public void MULTIARRAY_X() {
@@ -29,6 +31,8 @@ public class TestMULTIARRAY extends TestUtil {
 	assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
 			  7,
 			  72));
+
+	assertTrue(empty());
 
     }
 

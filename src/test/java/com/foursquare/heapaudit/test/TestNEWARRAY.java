@@ -18,6 +18,8 @@ public class TestNEWARRAY extends TestUtil {
 			  1,
 			  24));
 
+	assertTrue(empty());
+
     }
 
     @Test public void NEWARRAY_B() {
@@ -29,6 +31,8 @@ public class TestNEWARRAY extends TestUtil {
 	assertTrue(expect("byte",
 			  1,
 			  24));
+
+	assertTrue(empty());
 
     }
 
@@ -42,6 +46,8 @@ public class TestNEWARRAY extends TestUtil {
 			  1,
 			  24));
 
+	assertTrue(empty());
+
     }
 
     @Test public void NEWARRAY_S() {
@@ -53,6 +59,8 @@ public class TestNEWARRAY extends TestUtil {
 	assertTrue(expect("short",
 			  2,
 			  24));
+
+	assertTrue(empty());
 
     }
 
@@ -66,6 +74,8 @@ public class TestNEWARRAY extends TestUtil {
 			  4,
 			  32));
 
+	assertTrue(empty());
+
     }
 
     @Test public void NEWARRAY_J() {
@@ -77,6 +87,8 @@ public class TestNEWARRAY extends TestUtil {
 	assertTrue(expect("long",
 			  8,
 			  80));
+
+	assertTrue(empty());
 
     }
 
@@ -90,6 +102,8 @@ public class TestNEWARRAY extends TestUtil {
 			  4,
 			  32));
 
+	assertTrue(empty());
+
     }
 
     @Test public void NEWARRAY_D() {
@@ -101,6 +115,8 @@ public class TestNEWARRAY extends TestUtil {
 	assertTrue(expect("double",
 			  8,
 			  80));
+
+	assertTrue(empty());
 
     }
 

@@ -3,7 +3,7 @@ package com.foursquare.heapaudit.test;
 import com.foursquare.heapaudit.HeapRecorder;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class TestUtil {
+@HeapRecorder.Suppress public class TestUtil {
 
     public TestUtil() {
 
@@ -31,6 +31,12 @@ public class TestUtil {
 	return recorder.expect(name,
 			       count,
 			       size);
+
+    }
+
+    public boolean empty() {
+
+	return recorder.empty();
 
     }
 
@@ -64,6 +70,20 @@ public class TestUtil {
 
 	}
 
+	public boolean empty() {
+
+	    if (entries.isEmpty()) {
+
+		return true;
+
+	    }
+
+	    System.out.println(entries);
+
+	    return false;
+
+	}
+
 	private class Entry {
 
 	    public Entry(String name,
@@ -83,6 +103,12 @@ public class TestUtil {
 		Entry e = (Entry)obj;
 
 		return name.equals(e.name) && (count == e.count) && (size == e.size);
+
+	    }
+
+            @Override public String toString() {
+
+		return name + "[" + count + "] " + size;
 
 	    }
 

@@ -18,6 +18,8 @@ public class TestNEW extends TestUtil {
 			  -1,
 			  16));
 
+	assertTrue(empty());
+
     }
 
 }

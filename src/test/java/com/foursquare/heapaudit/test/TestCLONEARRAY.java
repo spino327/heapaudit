@@ -20,6 +20,8 @@ public class TestCLONEARRAY extends TestUtil {
 			  10,
 			  56));
 
+	assertTrue(empty());
+
     }
 
 }

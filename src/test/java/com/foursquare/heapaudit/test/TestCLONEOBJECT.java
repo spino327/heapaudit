@@ -20,6 +20,8 @@ public class TestCLONEOBJECT extends TestUtil {
 			  -1,
 			  16));
 
+	assertTrue(empty());
+
     }
 
 }

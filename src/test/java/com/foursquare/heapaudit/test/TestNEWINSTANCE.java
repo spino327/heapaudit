@@ -22,6 +22,8 @@ public class TestNEWINSTANCE extends TestUtil {
 			  3,
 			  32));
 
+	assertTrue(empty());
+
     }
 
     @Test public void NEWINSTANCE_2d() {
@@ -36,8 +38,14 @@ public class TestNEWINSTANCE extends TestUtil {
 			  35,
 			  280));
 
+	assertTrue(expect("I",
+			  2,
+			  24));
+
+	assertTrue(empty());
+
     }
-    /*
+
     @Test public void NEWINSTANCE_L0() throws InstantiationException, IllegalAccessException {
 
 	clear();
@@ -48,8 +56,10 @@ public class TestNEWINSTANCE extends TestUtil {
 			  -1,
 			  16));
 
+	assertTrue(empty());
+
     }
-    */
+
     @Test public void NEWINSTANCE_Lx() throws InstantiationException, IllegalAccessException , IllegalArgumentException, InvocationTargetException {
 
 	clear();
@@ -59,6 +69,12 @@ public class TestNEWINSTANCE extends TestUtil {
 	assertTrue(expect("com.foursquare.heapaudit.test.TestParent",
 			  -1,
 			  16));
+
+	assertTrue(expect("java.lang.Object",
+			  1,
+			  24));
+
+	assertTrue(empty());
 
     }
 

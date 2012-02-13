@@ -18,6 +18,8 @@ public class TestANEWARRAY extends TestUtil {
 			  arrayL.length,
 			  56));
 
+        assertTrue(empty());
+
     }
 
 }
