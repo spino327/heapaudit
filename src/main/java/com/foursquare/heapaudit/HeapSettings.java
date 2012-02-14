@@ -1,7 +1,9 @@
 package com.foursquare.heapaudit;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -36,7 +38,6 @@ class HeapSettings {
         //   * Use -D to debug instrumentation of a particular path.
         //   * Use -T to trace execution of auditing a particular path.
         //   * Use -I to dynamically inject recorders for a particular path.
-        //   * Use -R to dynamically remove recorders for a particular path.
         //
         //   * Paths are specified as a one or two part regular expressions
         //     where if the second part if omitted, it is treated as a catch all
@@ -82,8 +83,6 @@ class HeapSettings {
         toTraceAuditing.clear();
 
         toInjectRecorder.clear();
-
-        toRemoveRecorder.clear();
 
         toAvoidAuditing.addAll(Arrays.asList(new Pattern("java/lang/ThreadLocal"),
                                              new Pattern("org/objectweb/asm/.+"),
@@ -136,7 +135,11 @@ class HeapSettings {
 
                 case 'O':
 
-                    output = value.length() > 0 ? new PrintStream(value) : System.out;
+                    FileOutputStream stream = new FileOutputStream(value);
+
+                    lock = stream.getChannel();
+
+                    output = value.length() > 0 ? new PrintStream(stream) : System.out;
 
                     break;
 
@@ -161,12 +164,6 @@ class HeapSettings {
                 case 'I':
 
                     toInjectRecorder.add(new Pattern(value));
-
-                    break;
-
-                case 'R':
-
-                    toRemoveRecorder.add(new Pattern(value));
 
                     break;
 
@@ -201,6 +198,8 @@ class HeapSettings {
 
     public static boolean conditional = false;
 
+    public static FileChannel lock = null;
+
     public static PrintStream output = System.out;
 
     private final static ArrayList<Pattern> toSuppressAuditing = new ArrayList<Pattern>();
@@ -215,8 +214,6 @@ class HeapSettings {
     private final static ArrayList<Pattern> toTraceAuditing = new ArrayList<Pattern>();
 
     private final static ArrayList<Pattern> toInjectRecorder = new ArrayList<Pattern>();
-
-    private final static ArrayList<Pattern> toRemoveRecorder = new ArrayList<Pattern>();
 
     private static boolean should(ArrayList<Pattern> patterns,
                                   String classPath,
@@ -286,16 +283,6 @@ class HeapSettings {
 
         return dynamic &&
             should(toInjectRecorder,
-                   classPath,
-                   methodName);
-
-    }
-
-    public static boolean shouldRemoveRecorder(String classPath,
-                                               String methodName) {
-
-        return dynamic &&
-            should(toRemoveRecorder,
                    classPath,
                    methodName);
 

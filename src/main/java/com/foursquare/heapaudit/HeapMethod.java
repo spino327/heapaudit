@@ -10,14 +10,16 @@ import org.objectweb.asm.Opcodes;
 public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public HeapMethod(MethodVisitor mv,
+                      String source,
                       String methodId,
                       boolean suppressAuditing,
                       boolean debugAuditing,
                       boolean traceAuditing,
-                      boolean injectRecorder,
-                      boolean removeRecorder) {
+                      boolean injectRecorder) {
 
         this.mv = new MethodAdapter(mv);
+
+        this.source = source;
 
         this.id = methodId;
 
@@ -29,14 +31,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
         this.injectRecorder = injectRecorder;
 
-        this.removeRecorder = removeRecorder;
-
-        if (removeRecorder) {
-
-            HeapUtil.remove(id);
-
-        }
-        else if (injectRecorder) {
+        if (injectRecorder) {
 
             HeapUtil.inject(id);
 
@@ -49,6 +44,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public final MethodAdapter mv;
 
+    private final String source;
+
     private final String id;
 
     private boolean suppressAuditing;
@@ -58,8 +55,6 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     private final boolean traceAuditing;
 
     private final boolean injectRecorder;
-
-    private final boolean removeRecorder;
 
     public HeapVariables lvs = null;
 
@@ -113,13 +108,13 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitCode() {
 
         instrumentation(debugAuditing,
-                        "visitCode()");
+                        "visitCode() " + source + ":" + id);
 
         mv.visitCode();
 
         execution(traceAuditing,
                   mv,
-                  "visitCode()");
+                  "visitCode() " + source + ":" + id);
 
         visitEnter();
 
@@ -391,17 +386,6 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                         mv);
 
             }
-            else if (removeRecorder &&
-                     owner.equals("com/foursquare/heapaudit/HeapUtil") &&
-                     name.endsWith("register")) {
-
-                // STACK: [...|id]
-                mv.visitInsn(Opcodes.POP);
-                // STACK: [...]
-
-                return;
-
-            }
 
             break;
 
@@ -598,11 +582,11 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitLabel(Label label) {
 
         instrumentation(debugAuditing,
-                        "visitLabel(" + label + ")");
+                        "visitLabel() " + source + ":" + label);
 
         execution(traceAuditing,
                   mv,
-                  "visitLabel(" + label + ")");
+                  "visitLabel()" + source + ":" + label);
 
         mv.visitLabel(label);
 
@@ -655,14 +639,14 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                 Label start) {
 
         instrumentation(debugAuditing,
-                        "visitLineNumber(" + start + "#" + line + ")");
+                        "visitLineNumber() " + source + ":" + start + "#" + line);
 
         execution(traceAuditing,
                   mv,
-                  "visitLineNumber(" + start + "#" + line + ")");
+                  "visitLineNumber() " + source + ":" + start + "#" + line);
 
         mv.visitLineNumber(line,
-                              start);
+                           start);
 
     }
 

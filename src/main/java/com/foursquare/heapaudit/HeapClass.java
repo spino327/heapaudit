@@ -29,6 +29,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
     private final ClassAdapter cv;
 
+    private String source;
+
     private final String id;
 
     private boolean suppressClass;
@@ -59,6 +61,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
         instrumentation(debugClass,
                         "visitSource(" + source + ", " + debug + ")");
+
+        this.source = source;
 
         cv.visitSource(source,
                        debug);
@@ -155,11 +159,9 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
         boolean injectRecorder = HeapSettings.shouldInjectRecorder(id, method);
 
-        boolean removeRecorder = HeapSettings.shouldRemoveRecorder(id, method);
-
-        if (HeapSettings.shouldAvoidAuditing(id, method) &&
-            !injectRecorder &&
-            !removeRecorder) {
+        if (!suppressAuditing &&
+            HeapSettings.shouldAvoidAuditing(id, method) &&
+            !injectRecorder) {
 
             return cv.visitMethod(access,
                                   name,
@@ -174,12 +176,12 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                                       desc,
                                                       signature,
                                                       exceptions),
+                                       source,
                                        id + '@' + method,
                                        suppressAuditing,
                                        debugAuditing,
                                        traceAuditing,
-                                       injectRecorder,
-                                       removeRecorder);
+                                       injectRecorder);
 
         // The following sets up the weird cyclic dependency whereby the
         // HeapMethod implementation uses the HeapVariables class for injecting

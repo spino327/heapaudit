@@ -393,7 +393,7 @@ public class HeapQuantile extends HeapRecorder {
 
         for (Stats s: tally(global, true)) {
 
-            summary += "\n" + s.toString();
+            summary += "\n      - " + s.toString();
 
         }
 

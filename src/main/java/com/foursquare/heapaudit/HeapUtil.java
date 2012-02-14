@@ -1,6 +1,7 @@
 package com.foursquare.heapaudit;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
@@ -285,7 +286,7 @@ public abstract class HeapUtil {
                               int[] dimensions,
                               String type) {
 
-	if (HeapRecorder.suppress() != null) {
+        if (HeapRecorder.suppress() != null) {
 
             long overhead = 0;
 
@@ -352,20 +353,19 @@ public abstract class HeapUtil {
 
         if (context != null) {
 
-            try {
+            for (HeapRecorder recorder: HeapRecorder.getRecorders(context)) {
 
-                for (HeapRecorder recorder: HeapRecorder.getRecorders(context)) {
+                try {
 
                     recorder.record(type,
                                     count,
                                     size);
 
+                } catch (Exception e) {
+
+                    System.err.println(e);
+
                 }
-
-            } catch (Exception e) {
-
-                System.err.println(e);
-
             }
 
         }
@@ -380,16 +380,6 @@ public abstract class HeapUtil {
 
         HeapRecorder.suppress();
 
-        if (recorders.containsKey(id)) {
-
-            log("Recorder already exists for " + id);
-
-            return false;
-
-        }
-
-        log(id);
-
         recorders.put(id,
                       new HeapQuantile());
 
@@ -399,26 +389,14 @@ public abstract class HeapUtil {
 
     }
 
-    public static boolean remove(String id) {
+    public static void dump() {
 
-        HeapRecorder.suppress();
+        for (Map.Entry<String, HeapQuantile> recorder: recorders.entrySet()) {
 
-        HeapQuantile recorder = recorders.remove(id);
-
-        if (recorder == null) {
-
-            log("Recorder does not exist for " + id);
-
-            return false;
+            HeapSettings.output.println(recorder.getValue().summarize(true,
+                                                                      recorder.getKey()));
 
         }
-
-        HeapSettings.output.println(recorder.summarize(true,
-                                                       id));
-
-        HeapRecorder.unwind();
-
-        return true;
 
     }
 

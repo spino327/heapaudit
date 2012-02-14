@@ -87,20 +87,16 @@ to implement the integration hook to register heap recorders).
 	$ java -javaagent:heapaudit.jar MyTest
 
 Launch HeapAudit dynamically by injecting to the process of interest (does not
-require MyTest to have any prior intrumentations) and later removing the
-recorder. The recorder data is dumped to the console once removed.
+require MyTest to have any prior intrumentations). The recorder data is dumped
+to the console upon exiting.
 
 	$ java -jar heapaudit.jar 999 -Icom/foursquare/test/MyTest@test.+
-
-	$ java -jar heapaudit.jar 999 -Rcom/foursquare/test/MyTest@test.+
 
 The JDK's tools.jar library is required to launch HeapAudit dynamically. If
 launching within JRE, specify the -Xbootclasspath command line arg to point to
 the tools.jar file.
 
 	$ java -Xbootclasspath/a:/usr/local/lib/tools.jar -jar heapaudit.jar 999 -Icom/foursquare/test/MyTest@test.+
-
-	$ java -Xbootclasspath/a:/usr/local/lib/tools.jar -jar heapaudit.jar 999 -Rcom/foursquare/test/MyTest@test.+
 
 Additional options can be passed to HeapAudit to customize which classes and/or
 methods are not to be instrumented for recording allocations. For additional
