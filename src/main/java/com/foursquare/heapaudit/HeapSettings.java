@@ -87,6 +87,7 @@ class HeapSettings {
 
         toAvoidAuditing.addAll(Arrays.asList(new Pattern("java/lang/ThreadLocal"),
                                              new Pattern("org/objectweb/asm/.+"),
+                                             new Pattern("com/foursquare/heapaudit/HeapCollection.*"),
                                              new Pattern("com/foursquare/heapaudit/HeapRecorder.*"),
                                              new Pattern("com/foursquare/heapaudit/HeapUtil.*"),
                                              new Pattern("[$].*"),

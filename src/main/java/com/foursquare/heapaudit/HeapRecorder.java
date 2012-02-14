@@ -3,7 +3,6 @@ package com.foursquare.heapaudit;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.instrument.Instrumentation;
-import java.util.ArrayList;
 
 public abstract class HeapRecorder {
 
@@ -67,7 +66,7 @@ public abstract class HeapRecorder {
 
     public static Instrumentation instrumentation = null;
 
-    private static ArrayList<HeapRecorder> globalRecorders = new ArrayList<HeapRecorder>();
+    private static HeapCollection<HeapRecorder> globalRecorders = new HeapCollection<HeapRecorder>();
 
     private static ThreadLocal<NestedRecorders> localRecorders = new ThreadLocal<NestedRecorders>() {
 
@@ -85,9 +84,9 @@ public abstract class HeapRecorder {
 
     public static Object suppress() {
 
-        NestedRecorders recorders = localRecorders.get();
+        NestedRecorders context = localRecorders.get();
 
-        return (recorders.level++ == 0) ? recorders.context : null;
+        return (context.level++ == 0) ? context : null;
 
     }
 
@@ -96,29 +95,25 @@ public abstract class HeapRecorder {
 
     public static Object unwind() {
 
-        NestedRecorders recorders = localRecorders.get();
+        NestedRecorders context = localRecorders.get();
 
-        return (--recorders.level == 0) ? recorders.context : null;
+        return (--context.level == 0) ? context : null;
 
     }
 
     public static boolean hasRecorders() {
 
-        return hasRecorders(localRecorders.get().context);
+        return (localRecorders.get().recorders.size() > 0) || (globalRecorders.size() > 0);
 
     }
 
-    public static boolean hasRecorders(Object context) {
+    public static HeapCollection<HeapRecorder> getRecorders(Object context) {
 
-        return (((ArrayList<HeapRecorder>)context).size() > 0) || (globalRecorders.size() > 0);
+        HeapCollection<HeapRecorder> recorders = new HeapCollection<HeapRecorder>();
 
-    }
+        recorders.addAll(globalRecorders);
 
-    public static ArrayList<HeapRecorder> getRecorders(Object context) {
-
-        ArrayList<HeapRecorder> recorders = new ArrayList<HeapRecorder>(globalRecorders);
-
-        recorders.addAll((ArrayList<HeapRecorder>)context);
+        recorders.addAll(((NestedRecorders)context).recorders);
 
         return recorders;
 
@@ -126,7 +121,17 @@ public abstract class HeapRecorder {
 
     public static synchronized void register(HeapRecorder recorder) {
 
-        ArrayList<HeapRecorder> recorders = new ArrayList<HeapRecorder>(globalRecorders);
+        // The following round about way of inserting the recorder into
+        // globalRecorders is because the consuming end of this collection is
+        // not synchronized.
+
+        HeapCollection<HeapRecorder> recorders = new HeapCollection<HeapRecorder>();
+
+        for (HeapRecorder r: globalRecorders) {
+
+            recorders.add(r);
+
+        }
 
         recorders.add(recorder);
 
@@ -136,7 +141,17 @@ public abstract class HeapRecorder {
 
     public static synchronized void unregister(HeapRecorder recorder) {
 
-        ArrayList<HeapRecorder> recorders = new ArrayList<HeapRecorder>(globalRecorders);
+        // The following round about way of removing the recorder from
+        // globalRecorders is because the consuming end of this collection is
+        // not synchronized.
+
+        HeapCollection<HeapRecorder> recorders = new HeapCollection<HeapRecorder>();
+
+        for (HeapRecorder r: globalRecorders) {
+
+            recorders.add(r);
+
+        }
 
         recorders.remove(recorder);
 
@@ -154,7 +169,7 @@ public abstract class HeapRecorder {
         }
         else {
 
-            localRecorders.get().context.add(recorder);
+            localRecorders.get().recorders.add(recorder);
 
         }
 
@@ -170,7 +185,7 @@ public abstract class HeapRecorder {
         }
         else {
 
-            localRecorders.get().context.remove(recorder);
+            localRecorders.get().recorders.remove(recorder);
 
         }
 
@@ -182,6 +197,6 @@ class NestedRecorders {
 
     public int level = 0;
 
-    public ArrayList<HeapRecorder> context = new ArrayList<HeapRecorder>();
+    public HeapCollection<HeapRecorder> recorders = new HeapCollection<HeapRecorder>();
 
 }
