@@ -38,16 +38,12 @@ Both of the above inherit from the base class HeapRecorder. Additional recording
 behavior can be extended by implementing the record method in [HeapRecorder](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapRecorder.java).
 
 	class MyRecorder extends HeapRecorder {
-
 	    @Override public void record(String name,
 	                                 int count,
 	                                 long size) {
-
 	        System.out.println("Allocated " + name +
 	                           "[" + count + "] " + size + " bytes");
-
 	    }
-
 	}
 
 ## Registering the HeapAudit recorder
@@ -58,11 +54,8 @@ The following example shows how to register the HeapActivity recorder across all
 threads. The output will display as allocations occur.
 
 	HeapActivity r = new HeapActivity();
-
 	HeapRecorder.register(r, true);
-
 	MyObject o = new MyObject();
-
 	HeapRecorder.unregister(r, true);
 
 The HeapQuantile recorder requires an extra step at the end to tally up the
@@ -70,13 +63,9 @@ results. The following example shows how to register the HeapQuantile recorder
 only on the current thread and displays the summary at the end.
 
 	HeapQuantile r = new HeapQuantile();
-
 	HeapRecorder.register(r, false);
-
 	MyObject o = new MyObject();
-
 	HeapRecorder.unregister(r, false);
-
 	for (HeapQuantile.Stats s: r.tally(false, true)) System.out.println(s);
 
 ## Launching the HeapAudit java agent
@@ -91,18 +80,62 @@ require MyTest to have any prior intrumentations). The recorder data is dumped
 to the console upon exiting.
 
 	$ java -jar heapaudit.jar 999 -Icom/foursquare/test/MyTest@test.+
+	Press <enter> to exit HeapAudit...
 
 The JDK's tools.jar library is required to launch HeapAudit dynamically. If
 launching within JRE, specify the -Xbootclasspath command line arg to point to
 the tools.jar file.
 
 	$ java -Xbootclasspath/a:/usr/local/lib/tools.jar -jar heapaudit.jar 999 -Icom/foursquare/test/MyTest@test.+
+	Press <enter> to exit HeapAudit...
+
+Alternatively, an interactive menu will show if options are left off of the
+command line.
+
+	$ java -jar heapaudit.jar
+	999     MyTest
+	PID: 999
+	OPTIONS: -Icom/foursquare/test/MyTest@test.+
+	Press <enter> to exit HeapAudit...
 
 Additional options can be passed to HeapAudit to customize which classes and/or
 methods are not to be instrumented for recording allocations. For additional
 information on how to specify the options, see [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java).
 
 	$ java -javaagent:heapaudit.jar="-Acom/foursquare/test/.+" MyTest
+
+## Understanding HeapQuantile output
+
+The HeapQuantile recorder is intended to collect a concise summary of all the
+allocations while still providing a meaningful breakdown of types, sizes and
+occurrences.
+
+For instance, given the following code:
+
+	public void Test() {
+	    int array1D = new int[9];
+	    int array3D = new int[8][29][5];
+	    HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+	    for (int i = 0; i < 25; ++i) map.put(i, i);
+	}
+
+the HeapQuantile recorder collects the following output:
+
+	HEAP: MyTest@test()V
+	      - int[9] (56 bytes) x1
+	      - int[1160] (9464 bytes) x1
+	      - java.util.HashMap (48 bytes) x1
+	      - java.util.HashMap$Entry (32 bytes) x25
+	      - java.util.HashMap$Entry[16] (80 bytes) x1
+	      - java.util.HashMap$Entry[32] (144 bytes) x1
+
+The output starts with the HEAP prefix followed by the method signature in which
+the recorder was injected. The subsequent lines each show a bucket of captured
+allocations with the format: <TYPE>[<AVG_ELEMENTS>] (<AVG_BYTES>) x<OCCURRENCES>
+
+You will notice that multiple lines of the same type may appear. This is because
+each array type is further broken into separate buckets by element count over
+power of 2s.
 
 ## Troubleshooting
 

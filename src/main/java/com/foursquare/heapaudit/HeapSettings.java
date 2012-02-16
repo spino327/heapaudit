@@ -16,13 +16,12 @@ class HeapSettings {
         // 
         //   Syntax for args: [ -Xconditional ]
         //                    [ -Xtimeout=<milliseconds> ]
-        //                    [ -O<file> ]
+        //                    [ -Xoutput=<file> ]
         //                    [ -S<path> |
         //                      -A<path> |
         //                      -D<path> |
         //                      -T<path> |
-        //                      -I<path> |
-        //                      -R<path> ]*
+        //                      -I<path> ]*
         //
         //   Syntax for path: <class_regex>[@<method_regex>]
         //
@@ -35,7 +34,7 @@ class HeapSettings {
         //   * Use -Xtimeout for dynamic use case to automatically exit after
         //     the specified amount of milliseconds.
         //
-        //   * Use -O to redirect the output to the designated file.
+        //   * Use -Xoutput to redirect the output to the designated file.
         //
         //   * Use -S to suppress auditing a particular path and its sub calls.
         //   * Use -A to avoid auditing a particular path.
@@ -69,10 +68,10 @@ class HeapSettings {
         //   The -D and -T options are normally used for HeapAudit development
         //   purposes only.
         //
-        //   The -I and -R options are only applicable when HeapAudit is
-        //   dynamically injected into a running process. The dynamically
-        //   injected recorders capture all heap allocations that occur within
-        //   the designated method, including sub-method calls.
+        //   The -I option is only applicable when HeapAudit is dynamically
+        //   injected into a running process. The dynamically injected recorders
+        //   capture all heap allocations that occur within the designated
+        //   method, including sub-method calls.
 
         HeapSettings.dynamic = dynamic;
 
@@ -112,7 +111,7 @@ class HeapSettings {
                                                // java/.+ causes all kinds of trouble. It's not
                                                // actually known that java/util/.+ is safe
                                                ));
-                
+
         if (args != null) {
 
             for (String arg: args.split("[ #]")) {
@@ -135,21 +134,20 @@ class HeapSettings {
                         timeout = Integer.parseInt(value.substring(8));
 
                     }
+                    else if (value.startsWith("output=")) {
+
+                        FileOutputStream stream = new FileOutputStream(value.substring(7));
+
+                        lock = stream.getChannel();
+
+                        output = value.length() > 0 ? new PrintStream(stream) : System.out;
+
+                    }
                     else if (value.equals("conditional")) {
 
                         conditional = true;
 
                     }
-
-                    break;
-
-                case 'O':
-
-                    FileOutputStream stream = new FileOutputStream(value);
-
-                    lock = stream.getChannel();
-
-                    output = value.length() > 0 ? new PrintStream(stream) : System.out;
 
                     break;
 
