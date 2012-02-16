@@ -15,6 +15,7 @@ class HeapSettings {
         // The following describes how to specify the args string.
         // 
         //   Syntax for args: [ -Xconditional ]
+        //                    [ -Xtimeout=<milliseconds> ]
         //                    [ -O<file> ]
         //                    [ -S<path> |
         //                      -A<path> |
@@ -30,6 +31,9 @@ class HeapSettings {
         //     extra if-statements to short-circuit the recording logic.
         //     However, if recorders are expected to be mostly present, then
         //     including extra if-statements adds extra execution instructions.
+        //
+        //   * Use -Xtimeout for dynamic use case to automatically exit after
+        //     the specified amount of milliseconds.
         //
         //   * Use -O to redirect the output to the designated file.
         //
@@ -126,7 +130,12 @@ class HeapSettings {
 
                 case 'X':
 
-                    if (value.equals("conditional")) {
+                    if (value.startsWith("timeout=")) {
+
+                        timeout = Integer.parseInt(value.substring(8));
+
+                    }
+                    else if (value.equals("conditional")) {
 
                         conditional = true;
 
@@ -190,6 +199,11 @@ class HeapSettings {
     // dynamically or statically.
 
     public static boolean dynamic = false;
+
+    // The timeout specifies how many milliseconds to wait before exiting from
+    // the dynamic use case.
+
+    public static int timeout = -1;
 
     // The conditional setting determines whether to optimize for tradeoffs by
     // adding extra bytecode instructions to check and potentially skip the code

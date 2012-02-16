@@ -48,6 +48,8 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
         File file = null;
 
+        boolean manual = true;
+
         for (int i = 1; i < args.length; ++i) {
 
             s.append(' ');
@@ -59,6 +61,11 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
                 o = true;
 
                 file = new File(args[i].substring(2));
+
+            }
+            else if (args[i].startsWith("-Xtimeout=")) {
+
+                manual = false;
 
             }
 
@@ -88,26 +95,30 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
         VirtualMachine vm = VirtualMachine.attach(args[0]);
 
-        final FileLock lock = (new FileOutputStream(file)).getChannel().lock();
+        if (manual) {
 
-        (new Thread(new Runnable() {
+            final FileLock lock = (new FileOutputStream(file)).getChannel().lock();
 
-            public void run() {
+            (new Thread(new Runnable() {
 
-                try {
+                public void run() {
 
-                    System.console().readLine("Press <enter> to exit HeapAudit...");
+                    try {
 
-                    lock.release();
+                        System.console().readLine("Press <enter> to exit HeapAudit...");
+
+                        lock.release();
+
+                    }
+                    catch (Exception e) {
+
+                    }
 
                 }
-                catch (Exception e) {
 
-                }
+            })).start();
 
-            }
-
-        })).start();
+        }
 
         vm.loadAgent(HeapAudit.class.getProtectionDomain().getCodeSource().getLocation().getPath(),
                      s.toString());
@@ -157,7 +168,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
     // recorders from the target process. 
 
     public static void agentmain(String args,
-                                 Instrumentation instrumentation) throws FileNotFoundException, IOException, UnmodifiableClassException {
+                                 Instrumentation instrumentation) throws FileNotFoundException, InterruptedException, IOException, UnmodifiableClassException {
 
         initialize(args,
                    instrumentation,
@@ -169,9 +180,20 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
                    args,
                    instrumentation);
 
-        // Block until user hits enter from command line.
+        if (HeapSettings.timeout < 0) {
 
-        HeapSettings.lock.lock();
+            // Block until user hits enter from command line to exit.
+
+            HeapSettings.lock.lock();
+
+        }
+        else {
+
+            // Sleep for specified amount of millsecionds and exit.
+
+            Thread.sleep(HeapSettings.timeout);
+
+        }
 
         instrumentation.removeTransformer(agent);
 
