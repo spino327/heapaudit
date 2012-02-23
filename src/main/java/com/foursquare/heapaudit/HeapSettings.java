@@ -11,66 +11,6 @@ class HeapSettings {
 
     public static void parse(String args) throws FileNotFoundException {
 
-        // The following describes how to specify the args string.
-        // 
-        //   Syntax for args: [ -Xconditional ]
-        //                    [ -Xtimeout=<milliseconds> ]
-        //                    [ -Xoutput=<file> ]
-        //                    [ -S<path> |
-        //                      -A<path> |
-        //                      -D<path> |
-        //                      -T<path> |
-        //                      -I<path> ]*
-        //
-        //   Syntax for path: <class_regex>[@<method_regex>]
-        //
-        //   * Use -Xconditional if most of the time zero recorders are
-        //     registered to actively record heap allocations. It includes
-        //     extra if-statements to short-circuit the recording logic.
-        //     However, if recorders are expected to be mostly present, then
-        //     including extra if-statements adds extra execution instructions.
-        //
-        //   * Use -Xtimeout for dynamic use case to automatically exit after
-        //     the specified amount of milliseconds.
-        //
-        //   * Use -Xoutput to redirect the output to the designated file.
-        //
-        //   * Use -S to suppress auditing a particular path and its sub calls.
-        //   * Use -A to avoid auditing a particular path.
-        //   * Use -D to debug instrumentation of a particular path.
-        //   * Use -T to trace execution of auditing a particular path.
-        //   * Use -I to dynamically inject recorders for a particular path.
-        //
-        //   * Paths are specified as a one or two part regular expressions
-        //     where if the second part if omitted, it is treated as a catch all
-        //     wild card. The class_regex matches with the full namespace path
-        //     of the class where '/' is used as the separator. The method_regex
-        //     matches with the method name and method signature where the
-        //     signature follows the JNI method descriptor convention. See
-        //     http://java.sun.com/docs/books/jni/html/types.html
-        //
-        //   For instance:
-        //
-        //     The following avoids auditing all methods under the class
-        //     com/foursquare/MyUtil
-        //       -Acom/foursquare/MyUtil
-        //
-        //     The following injects recorders for all toString methods under
-        //     the class com/foursquare/MyTest
-        //       -Icom/foursquare/MyTest@toString.+
-        //
-        //   The -S option is more applicable to general scenarios over the -A
-        //   option. The former suppresses the entire sub call tree as oppose to
-        //   only skipping the designated class or method. The latter will still
-        //   include the indirect allocations down the callstack.
-        //
-        //   The -D and -T options are normally used for HeapAudit development
-        //   purposes only.
-        //
-        //   The -I option dynamically injects recorders to capture all heap
-        //   allocations that occur within the designated method, including
-        //   sub-method calls.
-
         toSuppressAuditing.clear();
 
         toAvoidAuditing.clear();

@@ -1,5 +1,6 @@
 package com.foursquare.heapaudit;
 
+import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import java.io.BufferedReader;
@@ -23,6 +24,70 @@ import org.objectweb.asm.ClassWriter;
 // java agent (the same jar file) into the target process.
 
 public class HeapAudit extends HeapUtil implements ClassFileTransformer {
+
+    private static void help() {
+
+        System.out.println(
+            "The following describes how to specify the args string.\n" +
+            "\n" +
+            "Syntax for args: [ -Xconditional ]\n" +
+            "                 [ -Xtimeout=<milliseconds> ]\n" +
+            "                 [ -Xoutput=<file> ]\n" +
+            "                 [ -S<path> |\n" +
+            "                   -A<path> |\n" +
+            "                   -D<path> |\n" +
+            "                   -T<path> |\n" +
+            "                   -I<path> ]*\n" +
+            "\n" +
+            "Syntax for path: <class_regex>[@<method_regex>]\n" +
+            "\n" +
+            "* Use -Xconditional if most of the time zero recorders are registered to\n" +
+            "  actively record heap allocations. It includes extra if-statements to short\n" +
+            "  circuit the recording logic. However, if recorders are expected to be mostly\n" +
+            "  present, then including extra if-statements will add extra execution\n" +
+            "  instructions.\n" +
+            "\n" +
+            "* Use -Xtimeout for dynamic use case to automatically exit after the specified\n" +
+            "  amount of milliseconds.\n" +
+            "\n" +
+            "* Use -Xoutput to redirect the output to the designated file.\n" +
+            "\n" +
+            "* Use -S to suppress auditing a particular path and its sub calls.\n" +
+            "* Use -A to avoid auditing a particular path.\n" +
+            "* Use -D to debug instrumentation of a particular path.\n" +
+            "* Use -T to trace execution of auditing a particular path.\n" +
+            "* Use -I to dynamically inject recorders for a particular path.\n" +
+            "\n" +
+            "* Paths are specified as a one or two part regular expressions where if the\n" +
+            "  second part if omitted, it is treated as a catch all wild card. The\n" +
+            "  class_regex matches with the full namespace path of the class where '/' is\n" +
+            "  used as the separator. The method_regex matches with the method name and\n" +
+            "  method signature where the signature follows the JNI method descriptor\n" +
+            "  convention. See http://java.sun.com/docs/books/jni/html/types.html\n" +
+            "\n" +
+            "For instance:\n" +
+            "\n" +
+            "  The following avoids auditing all methods under the class\n" +
+            "  com/foursquare/MyUtil\n" +
+            "    -Acom/foursquare/MyUtil\n" +
+            "\n" +
+            "  The following injects recorders for all toString methods under the class\n" +
+            "  com/foursquare/MyTest\n" +
+            "    -Icom/foursquare/MyTest@toString.+\n" +
+            "\n" +
+            "The -S option is more applicable to general scenarios over the -A option. The\n" +
+            "former suppresses the entire sub call tree as oppose to only skipping the\n" +
+            "designated class or method. The latter will still include the indirect\n" +
+            "allocations down the callstack.\n" +
+            "\n" +
+            "The -D and -T options are normally used for HeapAudit development purposes\n" +
+            "only.\n" +
+            "\n" +
+            "The -I option dynamically injects recorders to capture all heap allocations\n" +
+            "that occur within the designated method, including sub-method calls.\n"
+        );
+
+    }
 
     // The following is the wrapper that instructs JVM to load the java agent
     // into the designated target process.
@@ -61,9 +126,11 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
         }
 
-        VirtualMachine vm = VirtualMachine.attach(id);
+        VirtualMachine vm = null;
 
         try {
+
+            vm = VirtualMachine.attach(id);
 
             String[] options;
 
@@ -111,6 +178,8 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             }
 
             if (!hasInject) {
+
+                help();
 
                 throw new IllegalArgumentException("Missing -I option");
 
@@ -215,9 +284,20 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             }
 
         }
+        catch (AttachNotSupportedException e) {
+
+            help();
+
+            throw e;
+
+        }
         finally {
 
-            vm.detach();
+            if (vm != null) {
+
+                vm.detach();
+
+            }
 
         }
 

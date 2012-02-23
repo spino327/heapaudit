@@ -22,6 +22,11 @@ Build project with Maven:
 
 The built jar will be in 'target/'.
 
+NOTE: The built jar package references the file name with version suffix in its
+[manifest](https://github.com/foursquare/heapaudit/blob/master/pom.xml) boot
+class path. If the built jar package were to be renamed, the path may be
+required to be specified on the java command line.
+
 Because the included tests must be executed with the java agent attached, they
 must run in the verify phase instead of in the test phase as unit tests:
 
@@ -109,7 +114,7 @@ while not requiring prior code changes.
 
 Additional options can be passed to HeapAudit to customize which classes and/or
 methods are not to be instrumented for recording allocations. For additional
-information on how to specify the options, see [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java).
+information on how to specify the options, see [HeapAudit.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapAudit.java).
 
 	$ java -javaagent:heapaudit.jar="-Acom/foursquare/test/.+" MyTest
 
@@ -169,6 +174,10 @@ for list of namespaces avoided by default.
 ## Dependencies
 
 - [ASM](http://asm.ow2.org/)
+
+## Other
+
+- [HeapAudit - JVM Memory Profiler for the Real World](http://engineering.foursquare.com/2012/02/02/heapaudit-jvm-memory-profiler-for-the-real-world)
 
 ## Maintainers
 
