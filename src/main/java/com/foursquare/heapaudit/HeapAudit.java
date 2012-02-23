@@ -224,11 +224,9 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
     }
 
     private static void initialize(String args,
-                                   Instrumentation instrumentation,
-                                   boolean dynamic) throws FileNotFoundException {
+                                   Instrumentation instrumentation) throws FileNotFoundException {
 
-        HeapSettings.parse(args,
-                           dynamic);
+        HeapSettings.parse(args);
 
         HeapRecorder.isAuditing = true;
 
@@ -243,8 +241,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
                                  final Instrumentation instrumentation) throws FileNotFoundException, InterruptedException, IOException, UnmodifiableClassException {
 
         initialize(args,
-                   instrumentation,
-                   true);
+                   instrumentation);
 
         final HeapAudit agent = new HeapAudit();
 
@@ -317,12 +314,21 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
                                Instrumentation instrumentation) throws FileNotFoundException, UnmodifiableClassException {
 
         initialize(args,
-                   instrumentation,
-                   false);
+                   instrumentation);
 
         instrument(new HeapAudit(),
                    args,
                    instrumentation);
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+
+            @Override public void run() {
+
+                HeapUtil.dump();
+
+            }
+
+        });
 
     }
 

@@ -9,8 +9,7 @@ import java.util.Arrays;
 
 class HeapSettings {
 
-    public static void parse(String args,
-                             boolean dynamic) throws FileNotFoundException {
+    public static void parse(String args) throws FileNotFoundException {
 
         // The following describes how to specify the args string.
         // 
@@ -68,12 +67,9 @@ class HeapSettings {
         //   The -D and -T options are normally used for HeapAudit development
         //   purposes only.
         //
-        //   The -I option is only applicable when HeapAudit is dynamically
-        //   injected into a running process. The dynamically injected recorders
-        //   capture all heap allocations that occur within the designated
-        //   method, including sub-method calls.
-
-        HeapSettings.dynamic = dynamic;
+        //   The -I option dynamically injects recorders to capture all heap
+        //   allocations that occur within the designated method, including
+        //   sub-method calls.
 
         toSuppressAuditing.clear();
 
@@ -193,11 +189,6 @@ class HeapSettings {
 
     }
 
-    // The dynamic flag indicates whether the HeapAudit java agent was loaded
-    // dynamically or statically.
-
-    public static boolean dynamic = false;
-
     // The timeout specifies how many milliseconds to wait before exiting from
     // the dynamic use case.
 
@@ -294,10 +285,9 @@ class HeapSettings {
     public static boolean shouldInjectRecorder(String classPath,
                                                String methodName) {
 
-        return dynamic &&
-            should(toInjectRecorder,
-                   classPath,
-                   methodName);
+        return should(toInjectRecorder,
+                      classPath,
+                      methodName);
 
     }
 

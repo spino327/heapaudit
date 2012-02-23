@@ -2,7 +2,7 @@
 
 HeapAudit is a java agent which audits heap allocations for JVM processes.
 
-HeapAudit runs in two modes:
+HeapAudit runs in three modes:
 
 - STATIC: This requires a simple integration hook to be implemented by the java
 process of interest. The callback hook defines how the allocations are recorded
@@ -11,6 +11,8 @@ and the callback code is only executed when the java agent is loaded.
 heap allocations to stdout when removed. Be aware, a lot of recorders, including
 nested ones, may be injected if the supplied matching pattern is not restrictive
 enough.
+- HYBRID: This launches like the static use case but dynamically determins where
+to inject recorders.
 
 ## Building and testing the HeapAudit java agent
 
@@ -98,6 +100,13 @@ command line.
 	OPTIONS: -Icom/foursquare/test/MyTest@test.+
 	Press <enter> to exit HeapAudit...
 
+Another hybrid way is to statically instrument the process of interest at launch
+time with dynamically injected recorders. This will provide an inclusive
+collection from the moment the targeted process starts to the moment it exits
+while not requiring prior code changes.
+
+	$ java -javaagent:heapaudit.jar=-Icom/foursquare/test/MyTest@test.+ MyTest
+
 Additional options can be passed to HeapAudit to customize which classes and/or
 methods are not to be instrumented for recording allocations. For additional
 information on how to specify the options, see [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java).
@@ -131,7 +140,8 @@ the HeapQuantile recorder collects the following output:
 
 The output starts with the HEAP prefix followed by the method signature in which
 the recorder was injected. The subsequent lines each show a bucket of captured
-allocations with the format: <TYPE>[<AVG_ELEMENTS>] (<AVG_BYTES>) x<OCCURRENCES>
+allocations with the format: \<TYPE\>\[\<AVG_ELEMENTS\>\] (\<AVG_BYTES\> bytes)
+x\<OCCURRENCES\>
 
 You will notice that multiple lines of the same type may appear. This is because
 each array type is further broken into separate buckets by element count over

@@ -151,13 +151,18 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
         String method = name + desc;
 
-        boolean suppressAuditing = suppressClass || HeapSettings.shouldSuppressAuditing(id, method);
+        boolean suppressAuditing = suppressClass ||
+                                   HeapSettings.shouldSuppressAuditing(id,
+                                                                       method);
 
-        boolean debugAuditing = HeapSettings.shouldDebugAuditing(id, method);
+        boolean debugAuditing = HeapSettings.shouldDebugAuditing(id,
+                                                                 method);
 
-        boolean traceAuditing = HeapSettings.shouldTraceAuditing(id, method);
+        boolean traceAuditing = HeapSettings.shouldTraceAuditing(id,
+                                                                 method);
 
-        boolean injectRecorder = HeapSettings.shouldInjectRecorder(id, method);
+        boolean injectRecorder = HeapSettings.shouldInjectRecorder(id,
+                                                                   method);
 
         if (!suppressAuditing &&
             HeapSettings.shouldAvoidAuditing(id, method) &&

@@ -398,6 +398,8 @@ public abstract class HeapUtil {
 
         }
 
+        recorders.clear();
+
     }
 
     public static void register(String id) {
