@@ -16,8 +16,8 @@ public abstract class HeapUtil {
 
     }
 
-    public static void instrumentation(boolean debug,
-                                       String text) {
+    public static void log(boolean debug,
+                           String text) {
 
         if (debug) {
 
@@ -27,9 +27,13 @@ public abstract class HeapUtil {
 
     }
 
-    public static void execution(boolean trace,
-                                 MethodAdapter mv,
-                                 String text) {
+    public static void log(boolean debug,
+                           boolean trace,
+                           MethodAdapter mv,
+                           String text) {
+
+        log(debug,
+            text);
 
         if (trace) {
 

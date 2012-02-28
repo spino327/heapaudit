@@ -33,12 +33,10 @@ public class HeapVariables extends HeapUtil {
 
         int index = lvs.newLocal(type);
 
-        instrumentation(debug,
-                        "\tDEFINE #" + index);
-
-        execution(trace,
-                  mv,
-                  "\tDEFINE #" + index);
+        log(debug,
+            trace,
+            mv,
+            "\tDEFINE #" + index);
 
         variables.add(new Variable(index,
                                    type,
@@ -53,12 +51,10 @@ public class HeapVariables extends HeapUtil {
 
         for (Variable variable: variables) {
 
-            instrumentation(debug,
-                            "\tDECLARE #" + variable.index);
-
-            execution(trace,
-                      mv,
-                      "\tDECLARE #" + variable.index);
+            log(debug,
+                trace,
+                mv,
+                "\tDECLARE #" + variable.index);
 
             mv.visitLocalVariable("$" + variable.index,
                                   variable.type.getDescriptor(),

@@ -15,12 +15,10 @@ class HeapMULTIARRAY extends HeapUtil {
                              MethodAdapter mv,
                              String desc) {
 
-        instrumentation(debug,
-                        "\tMULTIARRAY.after(" + desc + ")");
-
-        execution(trace,
-                  mv,
-                  "\tMULTIARRAY.after(" + desc + ")");
+        log(debug,
+            trace,
+            mv,
+            "\tMULTIARRAY.after(" + desc + ")");
 
         Label finish = new Label();
 

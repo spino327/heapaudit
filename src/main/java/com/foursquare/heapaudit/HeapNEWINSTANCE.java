@@ -15,12 +15,10 @@ class HeapNEWINSTANCE extends HeapUtil {
                               boolean trace,
                               MethodAdapter mv) {
 
-        instrumentation(debug,
-                        "\tNEWINSTANCE.before");
-
-        execution(trace,
-                  mv,
-                  "\tNEWINSTANCE.before");
+        log(debug,
+            trace,
+            mv,
+            "\tNEWINSTANCE.before");
 
         // STACK: [...|class]
         mv.visitLdcInsn(-1);
@@ -36,12 +34,10 @@ class HeapNEWINSTANCE extends HeapUtil {
                              boolean trace,
                              MethodAdapter mv) {
 
-        instrumentation(debug,
-                        "\tNEWINSTANCE.after");
-
-        execution(trace,
-                  mv,
-                  "\tNEWINSTANCE.after");
+        log(debug,
+            trace,
+            mv,
+            "\tNEWINSTANCE.after");
 
         Label cleanup = new Label();
 
@@ -102,12 +98,10 @@ class HeapNEWINSTANCE extends HeapUtil {
                                boolean trace,
                                MethodAdapter mv) {
 
-        instrumentation(debug,
-                        "\tNEWINSTANCE.beforeX");
-
-        execution(trace,
-                  mv,
-                  "\tNEWINSTANCE.beforeX");
+        log(debug,
+            trace,
+            mv,
+            "\tNEWINSTANCE.beforeX");
 
         // STACK: [...|class|count]
         mv.visitInsn(Opcodes.SWAP);
@@ -123,12 +117,10 @@ class HeapNEWINSTANCE extends HeapUtil {
                               boolean trace,
                               MethodAdapter mv) {
 
-        instrumentation(debug,
-                        "\tNEWINSTANCE.afterY");
-
-        execution(trace,
-                  mv,
-                  "\tNEWINSTANCE.afterY");
+        log(debug,
+            trace,
+            mv,
+            "\tNEWINSTANCE.afterY");
 
         Label cleanup = new Label();
 

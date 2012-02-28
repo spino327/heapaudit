@@ -16,12 +16,10 @@ class HeapCLONEOBJECT extends HeapUtil {
                              boolean trace,
                              MethodAdapter mv) {
 
-        instrumentation(debug,
-                        "\tCOPYINSTANCE.after... VERIFY!");
-
-        execution(trace,
-                  mv,
-                  "\tCOPYINSTANCE.after");
+        log(debug,
+            trace,
+            mv,
+            "\tCLONEOBJECT.after");
 
         Label finish = new Label();
 

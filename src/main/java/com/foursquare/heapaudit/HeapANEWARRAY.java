@@ -15,12 +15,10 @@ class HeapANEWARRAY extends HeapUtil {
                               MethodAdapter mv,
                               String type) {
 
-        instrumentation(debug,
-                        "\tANEWARRAY.before(" + type + ")");
-
-        execution(trace,
-                  mv,
-                  "\tANEWARRAY.before(" + type + ")");
+        log(debug,
+            trace,
+            mv,
+            "\tANEWARRAY.before(" + type + ")");
 
         // STACK: [...|count]
         mv.visitInsn(Opcodes.DUP);
@@ -33,12 +31,10 @@ class HeapANEWARRAY extends HeapUtil {
                              MethodAdapter mv,
                              String type) {
 
-        instrumentation(debug,
-                        "\tANEWARRAY.after(" + type + ")");
-
-        execution(trace,
-                  mv,
-                  "\tANEWARRAY.after(" + type + ")");
+        log(debug,
+            trace,
+            mv,
+            "\tANEWARRAY.after(" + type + ")");
 
         Label cleanup = new Label();
 

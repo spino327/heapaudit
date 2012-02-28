@@ -15,12 +15,10 @@ class HeapCLONEARRAY extends HeapUtil {
                              MethodAdapter mv,
                              String owner) {
 
-        instrumentation(debug,
-                        "\tCLONEARRAY.after");
-
-        execution(trace,
-                  mv,
-                  "\tCLONEARRAY.after");
+        log(debug,
+            trace,
+            mv,
+            "\tCLONEARRAY.after");
 
         Label finish = new Label();
 

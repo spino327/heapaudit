@@ -15,12 +15,10 @@ class HeapNEWARRAY extends HeapUtil {
                               MethodAdapter mv,
                               int operand) {
 
-        instrumentation(debug,
-                        "\tNEWARRAY.before(" + types[operand] + ")");
-
-        execution(trace,
-                  mv,
-                  "\tNEWARRAY.before(" + types[operand] + ")");
+        log(debug,
+            trace,
+            mv,
+            "\tNEWARRAY.before(" + types[operand] + ")");
 
         // STACK: [...|count]
         mv.visitInsn(Opcodes.DUP);
@@ -33,12 +31,10 @@ class HeapNEWARRAY extends HeapUtil {
                              MethodAdapter mv,
                              int operand) {
 
-        instrumentation(debug,
-                        "\tNEWARRAY.after(" + types[operand] + ")");
-
-        execution(trace,
-                  mv,
-                  "\tNEWARRAY.after(" + types[operand] + ")");
+        log(debug,
+            trace,
+            mv,
+            "\tNEWARRAY.after(" + types[operand] + ")");
 
         Label cleanup = new Label();
 

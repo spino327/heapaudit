@@ -37,8 +37,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
         }
 
-        instrumentation(debugAuditing,
-                        "\tMETHOD " + id);
+        log(debugAuditing,
+            "\tMETHOD " + id);
 
     }
 
@@ -60,8 +60,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public AnnotationVisitor visitAnnotationDefault() {
 
-        instrumentation(debugAuditing,
-                        "visitAnnotationDefault()");
+        log(debugAuditing,
+            "visitAnnotationDefault()");
 
         return mv.visitAnnotationDefault();
 
@@ -70,8 +70,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public AnnotationVisitor visitAnnotation(String desc,
                                              boolean visible) {
 
-        instrumentation(debugAuditing,
-                        "visitAnnotation(" + desc + ", " + visible + ")");
+        log(debugAuditing,
+            "visitAnnotation(" + desc + ", " + visible + ")");
 
         if (desc.equals("Lcom/foursquare/heapaudit/HeapRecorder$Suppress;")) {
 
@@ -88,8 +88,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                                       String desc,
                                                       boolean visible) {
 
-        instrumentation(debugAuditing,
-                        "visitParameterAnnotation()");
+        log(debugAuditing,
+            "visitParameterAnnotation()");
 
         return mv.visitParameterAnnotation(parameter,
                                            desc,
@@ -98,8 +98,8 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public void visitAttribute(Attribute attr) {
 
-        instrumentation(debugAuditing,
-                        "visitAttribute(" + attr.type + ")");
+        log(debugAuditing,
+            "visitAttribute(" + attr.type + ")");
 
         mv.visitAttribute(attr);
 
@@ -107,14 +107,12 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public void visitCode() {
 
-        instrumentation(debugAuditing,
-                        "visitCode() " + source + ":" + id);
-
         mv.visitCode();
 
-        execution(traceAuditing,
-                  mv,
-                  "visitCode() " + source + ":" + id);
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitCode() " + source + ":" + id);
 
         visitEnter();
 
@@ -126,12 +124,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                            int nStack,
                            Object[] stack) {
 
-        instrumentation(debugAuditing,
-                        "visitFrame()");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitFrame()");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitFrame()");
 
         mv.visitFrame(type,
                       nLocal,
@@ -143,12 +139,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public void visitInsn(int opcode) {
 
-        instrumentation(debugAuditing,
-                        "visitInsn(" + opcode + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitInsn(" + opcode + ")");
+         log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitInsn(" + opcode + ")");
 
         switch (opcode) {
 
@@ -176,12 +170,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public void visitLdcInsn(Object cst) {
 
-        instrumentation(debugAuditing,
-                        "visitLdcInsn(" + cst + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitLdcInsn(" + cst + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitLdcInsn(" + cst + ")");
 
         mv.visitLdcInsn(cst);
 
@@ -190,12 +182,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitIincInsn(int var,
                               int increment) {
 
-        instrumentation(debugAuditing,
-                        "visitIincInsn()");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitIincInsn()");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitIincInsn()");
 
         mv.visitIincInsn(var,
                          increment);
@@ -205,12 +195,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitVarInsn(int opcode,
                              int var) {
 
-        instrumentation(debugAuditing,
-                        "visitVarInsn(" + opcode + ", " + var + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitVarInsn(" + opcode + ", " + var + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitVarInsn(" + opcode + ", " + var + ")");
 
         switch (opcode) {
 
@@ -232,12 +220,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                String name,
                                String desc) {
 
-        instrumentation(debugAuditing,
-                        "visitFieldInsn(" + opcode + ", " + owner + ", " + name + ", " + desc + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitFieldInsn(" + opcode + ", " + owner + ", " + name + ", " + desc + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitFieldInsn(" + opcode + ", " + owner + ", " + name + ", " + desc + ")");
 
         mv.visitFieldInsn(opcode,
                           owner,
@@ -249,12 +235,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitIntInsn(int opcode,
                              int operand) {
 
-        instrumentation(debugAuditing,
-                        "visitIntInsn(" + opcode + ", " + operand + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitIntInsn(" + opcode + ", " + operand + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitIntInsn(" + opcode + ", " + operand + ")");
 
         switch (opcode) {
 
@@ -296,12 +280,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitTypeInsn(int opcode,
                               String type) {
 
-        instrumentation(debugAuditing,
-                        "visitTypeInsn(" + opcode + ", " + type + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitTypeInsn(" + opcode + ", " + type + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitTypeInsn(" + opcode + ", " + type + ")");
 
         switch (opcode) {
 
@@ -349,12 +331,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                 String name,
                                 String signature) {
 
-        instrumentation(debugAuditing,
-                        "visitMethodInsn(" + opcode + ", " + owner + ", " + name + ", " + signature + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitMethodInsn(" + opcode + ", " + owner + ", " + name + ", " + signature + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitMethodInsn(" + opcode + ", " + owner + ", " + name + ", " + signature + ")");
 
         switch (opcode) {
 
@@ -511,12 +491,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitMultiANewArrayInsn(String desc,
                                         int dims) {
 
-        instrumentation(debugAuditing,
-                        "visitMultiANewArrayInsn(" + desc + ", " + dims + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitMultiANewArrayInsn(" + desc + ", " + dims + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitMultiANewArrayInsn(" + desc + ", " + dims + ")");
 
         mv.visitMultiANewArrayInsn(desc,
                                    dims);
@@ -531,12 +509,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitJumpInsn(int opcode,
                               Label label) {
 
-        instrumentation(debugAuditing,
-                        "visitJumpInsn(" + opcode + ", " + label + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitJumpInsn(" + opcode + ", " + label + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitJumpInsn(" + opcode + ", " + label + ")");
 
         mv.visitJumpInsn(opcode,
                          label);
@@ -547,12 +523,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                       int[] keys,
                                       Label[] labels) {
 
-        instrumentation(debugAuditing,
-                        "visitLookupSwitchInsn()");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitLookupSwitchInsn()");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitLookupSwitchInsn()");
 
         mv.visitLookupSwitchInsn(dlft,
                                  keys,
@@ -565,12 +539,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                      Label dlft,
                                      Label[] labels) {
 
-        instrumentation(debugAuditing,
-                        "visitTableSwitchInsn()");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitTableSwitchInsn()");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitTableSwitchInsn()");
 
         mv.visitTableSwitchInsn(min,
                                 max,
@@ -581,12 +553,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public void visitLabel(Label label) {
 
-        instrumentation(debugAuditing,
-                        "visitLabel() " + source + ":" + label);
-
-        execution(traceAuditing,
-                  mv,
-                  "visitLabel()" + source + ":" + label);
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitLabel()" + source + ":" + label);
 
         mv.visitLabel(label);
 
@@ -597,12 +567,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                    Label handler,
                                    String type) {
 
-        instrumentation(debugAuditing,
-                        "visitTryCatchBlock()");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitTryCatchBlock()");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitTryCatchBlock()");
 
         mv.visitTryCatchBlock(start,
                               end,
@@ -619,12 +587,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                    Label end,
                                    int index) {
 
-        instrumentation(debugAuditing,
-                        "visitLocalVariable(" + name + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitLocalVariable(" + name + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitLocalVariable(" + name + ")");
 
         mv.visitLocalVariable(name,
                               desc,
@@ -638,12 +604,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitLineNumber(int line,
                                 Label start) {
 
-        instrumentation(debugAuditing,
-                        "visitLineNumber() " + source + ":" + start + "#" + line);
-
-        execution(traceAuditing,
-                  mv,
-                  "visitLineNumber() " + source + ":" + start + "#" + line);
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitLineNumber() " + source + ":" + start + "#" + line);
 
         mv.visitLineNumber(line,
                            start);
@@ -653,12 +617,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitMaxs(int maxStack,
                           int maxLocals) {
 
-        instrumentation(debugAuditing,
-                        "visitMaxs(" + maxStack + ", " + maxLocals + ")");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitMaxs(" + maxStack + ", " + maxLocals + ")");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitMaxs(" + maxStack + ", " + maxLocals + ")");
 
         lvs.declare();
 
@@ -669,12 +631,10 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
     public void visitEnd() {
 
-        instrumentation(debugAuditing,
-                        "visitEnd()");
-
-        execution(traceAuditing,
-                  mv,
-                  "visitEnd()");
+        log(debugAuditing,
+            traceAuditing,
+            mv,
+            "visitEnd()");
 
         mv.visitEnd();
 

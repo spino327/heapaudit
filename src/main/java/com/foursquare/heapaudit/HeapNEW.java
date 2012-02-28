@@ -25,12 +25,10 @@ class HeapNEW extends HeapUtil {
                               HeapVariables lvs,
                               String signature) {
 
-        instrumentation(debug,
-                        "\tNEW.before");
-
-        execution(trace,
-                  mv,
-                  "\tNEW.before");
+        log(debug,
+            trace,
+            mv,
+            "\tNEW.before");
 
         Type[] args = Type.getArgumentTypes(signature);
 
@@ -77,12 +75,10 @@ class HeapNEW extends HeapUtil {
                              MethodAdapter mv,
                              String owner) {
 
-        instrumentation(debug,
-                        "\tNEW.after");
-
-        execution(trace,
-                  mv,
-                  "\tNEW.after");
+        log(debug,
+            trace,
+            mv,
+            "\tNEW.after");
 
         Label cleanup = new Label();
 

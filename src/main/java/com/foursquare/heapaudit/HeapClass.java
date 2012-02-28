@@ -22,8 +22,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
         this.debugClass = debugAuditing;
 
-        instrumentation(debugClass,
-                        "\tCLASS " + id);
+        log(debugClass,
+            "\tCLASS " + id);
 
     }
 
@@ -44,8 +44,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                       String superName,
                       String[] interfaces) {
 
-        instrumentation(debugClass,
-                        "visit()");
+        log(debugClass,
+            "visit()");
 
         cv.visit(version,
                  access,
@@ -59,8 +59,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
     public void visitSource(String source,
                             String debug) {
 
-        instrumentation(debugClass,
-                        "visitSource(" + source + ", " + debug + ")");
+        log(debugClass,
+            "visitSource(" + source + ", " + debug + ")");
 
         this.source = source;
 
@@ -73,8 +73,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                 String name,
                                 String desc) {
 
-        instrumentation(debugClass,
-                        "visitOuterClass()");
+        log(debugClass,
+            "visitOuterClass()");
 
         cv.visitOuterClass(owner,
                            name,
@@ -85,8 +85,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
     public AnnotationVisitor visitAnnotation(String desc,
                                              boolean visible) {
 
-        instrumentation(debugClass,
-                        "visitAnnotation(" + desc + ", " + visible + ")");
+        log(debugClass,
+            "visitAnnotation(" + desc + ", " + visible + ")");
 
         if (desc.equals("Lcom/foursquare/heapaudit/HeapRecorder$Suppress;")) {
 
@@ -101,8 +101,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
     public void visitAttribute(Attribute attr) {
 
-        instrumentation(debugClass,
-                        "visitAttribute()");
+        log(debugClass,
+            "visitAttribute()");
 
         cv.visitAttribute(attr);
 
@@ -113,8 +113,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                 String innerName,
                                 int access) {
 
-        instrumentation(debugClass,
-                        "visitInnerClass()");
+        log(debugClass,
+            "visitInnerClass()");
 
         cv.visitInnerClass(name,
                            outerName,
@@ -129,8 +129,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                    String signature,
                                    Object value) {
 
-        instrumentation(debugClass,
-                        "visitField()");
+        log(debugClass,
+            "visitField()");
 
         return cv.visitField(access,
                              name,
@@ -146,8 +146,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                      String signature,
                                      String[] exceptions) {
 
-        instrumentation(debugClass,
-                        "visitMethod()");
+        log(debugClass,
+            "visitMethod()");
 
         String method = name + desc;
 
@@ -205,8 +205,8 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
 
     public void visitEnd() {
 
-        instrumentation(debugClass,
-                        "visitEnd()");
+        log(debugClass,
+            "visitEnd()");
 
         cv.visitEnd();
 
