@@ -12,6 +12,27 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>tools.jar</id>
+      <activation>
+        <file>
+          <exists>${java.home}/../lib/tools.jar</exists>
+        </file>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+          <version>1.6</version>
+          <scope>system</scope>
+          <optional>true</optional>
+          <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
   <dependencies>
 
     <dependency>
@@ -49,7 +70,7 @@
             <manifestEntries>
               <Can-Redefine-Classes>true</Can-Redefine-Classes>
               <Can-Retransform-Classes>true</Can-Retransform-Classes>
-              <Boot-Class-Path>${artifactId}-${version}.jar</Boot-Class-Path>
+              <Boot-Class-Path>${project.artifactId}-${project.version}.jar</Boot-Class-Path>
               <Main-Class>com.foursquare.heapaudit.HeapAudit</Main-Class>
               <Agent-Class>com.foursquare.heapaudit.HeapAudit</Agent-Class>
               <Premain-Class>com.foursquare.heapaudit.HeapAudit</Premain-Class>
@@ -101,7 +122,7 @@
               <goal>verify</goal>
             </goals>
             <configuration>
-              <argLine>-javaagent:${project.build.directory}/${artifactId}-${version}.jar="-Xconditional -Aorg/apache/maven/.+ -Ajunit/.+ -Aorg/junit/.+"</argLine>
+              <argLine>-javaagent:${project.build.directory}/${project.artifactId}-${project.version}.jar="-Xconditional -Aorg/apache/maven/.+ -Ajunit/.+ -Aorg/junit/.+"</argLine>
               <workingDirectory>${project.build.directory}</workingDirectory>
               <includes>
                 <include>**/Test*.java</include>
