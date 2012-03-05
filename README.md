@@ -14,7 +14,7 @@ enough.
 - HYBRID: This launches like the static use case but dynamically determins where
 to inject recorders.
 
-## Building and testing the HeapAudit java agent
+### Building and testing the HeapAudit java agent
 
 Build project with Maven:
 
@@ -32,7 +32,7 @@ must run in the verify phase instead of in the test phase as unit tests:
 
 	$ mvn verify
 
-## Implementing the HeapAudit hook
+### Implementing the HeapAudit hook
 
 Currently, two recorders are provided with HeapAudit:
 
@@ -53,7 +53,7 @@ behavior can be extended by implementing the record method in [HeapRecorder](htt
 	    }
 	}
 
-## Registering the HeapAudit recorder
+### Registering the HeapAudit recorder
 
 Recording starts when it is registered and stops when it is unregistered. Each
 recorder can be registered globally across all threads or local to the current.
@@ -75,7 +75,7 @@ only on the current thread and displays the summary at the end.
 	HeapRecorder.unregister(r, false);
 	for (HeapQuantile.Stats s: r.tally(false, true)) System.out.println(s);
 
-## Launching the HeapAudit java agent
+### Launching the HeapAudit java agent
 
 Launch HeapAudit statically along with the process of interest (requires MyTest
 to implement the integration hook to register heap recorders).
@@ -118,7 +118,7 @@ information on how to specify the options, see [HeapAudit.java](https://github.c
 
 	$ java -javaagent:heapaudit.jar="-Acom/foursquare/test/.+" MyTest
 
-## Understanding HeapQuantile output
+### Understanding HeapQuantile output
 
 The HeapQuantile recorder is intended to collect a concise summary of all the
 allocations while still providing a meaningful breakdown of types, sizes and
@@ -152,7 +152,7 @@ You will notice that multiple lines of the same type may appear. This is because
 each array type is further broken into separate buckets by element count over
 power of 2s.
 
-## Troubleshooting
+### Troubleshooting
 
 Some libraries may not be instrumentable. This often manifests in some useless
 error while instrumenting the target code, i.e. some generic error in the form
@@ -171,14 +171,14 @@ startup. We subsequently ran HeapAudit with "-Ajrockit/.+" and everything
 returned back to normal. See [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java)
 for list of namespaces avoided by default.
 
-## Dependencies
+### Dependencies
 
 - [ASM](http://asm.ow2.org/)
 
-## Other
+### Other
 
 - [HeapAudit - JVM Memory Profiler for the Real World](http://engineering.foursquare.com/2012/02/02/heapaudit-jvm-memory-profiler-for-the-real-world)
 
-## Maintainers
+### Maintainers
 
 - Norbert Y. Hu norberthu@foursquare.com
