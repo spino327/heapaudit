@@ -29,13 +29,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
 
         this.traceAuditing = traceAuditing;
 
-        this.injectRecorder = injectRecorder;
-
-        if (injectRecorder) {
-
-            HeapUtil.inject(id);
-
-        }
+        this.injectRecorder = injectRecorder && HeapUtil.inject(id);
 
         log(debugAuditing,
             "\tMETHOD " + id);

@@ -1,7 +1,6 @@
 package com.foursquare.heapaudit;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
@@ -378,14 +377,34 @@ public abstract class HeapUtil {
 
     }
 
-    private final static HashMap<String, HeapQuantile> recorders = new HashMap<String, HeapQuantile>();
+    private final static HashMap<String, HeapSummary> recorders = new HashMap<String, HeapSummary>();
 
     public static boolean inject(String id) {
 
         HeapRecorder.suppress();
 
-        recorders.put(id,
-                      new HeapQuantile());
+        try {
+
+            HeapSummary recorder = (HeapSettings.recorderClass == null) ?
+                new HeapQuantile() :
+                (HeapSummary)HeapSettings.recorderClass.newInstance();
+
+            recorder.setId(id);
+
+            recorders.put(id,
+                          recorder);
+
+        }
+        catch (IllegalAccessException e) {
+
+            return false;
+
+        }
+        catch (InstantiationException e) {
+
+            return false;
+
+        }
 
         HeapRecorder.unwind();
 
@@ -395,10 +414,9 @@ public abstract class HeapUtil {
 
     public static void dump() {
 
-        for (Map.Entry<String, HeapQuantile> recorder: recorders.entrySet()) {
+        for (HeapSummary recorder: recorders.values()) {
 
-            HeapSettings.output.println(recorder.getValue().summarize(true,
-                                                                      recorder.getKey()));
+            HeapSettings.output.println(recorder.summarize());
 
         }
 
@@ -410,7 +428,7 @@ public abstract class HeapUtil {
 
         HeapRecorder.suppress();
 
-        HeapQuantile recorder = recorders.get(id);
+        HeapSummary recorder = recorders.get(id);
 
         if (recorder != null) {
 
@@ -426,7 +444,7 @@ public abstract class HeapUtil {
 
         HeapRecorder.suppress();
 
-        HeapQuantile recorder = recorders.get(id);
+        HeapSummary recorder = recorders.get(id);
 
         if (recorder != null) {
 

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
+import java.net.MalformedURLException;
 import java.nio.channels.FileLock;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             "Syntax for args: [ -Xconditional ]\n" +
             "                 [ -Xtimeout=<milliseconds> ]\n" +
             "                 [ -Xoutput=<file> ]\n" +
+            "                 [ -Xrecorder=<class>@<jar> ]\n" +
             "                 [ -S<path> |\n" +
             "                   -A<path> |\n" +
             "                   -D<path> |\n" +
@@ -51,6 +53,9 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             "  amount of milliseconds.\n" +
             "\n" +
             "* Use -Xoutput to redirect the output to the designated file.\n" +
+            "\n" +
+            "* Use -Xrecorder to override the default dynamic recorder with the specified\n" +
+            "  recorder class in the designated jar file.\n" +
             "\n" +
             "* Use -S to suppress auditing a particular path and its sub calls.\n" +
             "* Use -A to avoid auditing a particular path.\n" +
@@ -304,7 +309,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
     }
 
     private static void initialize(String args,
-                                   Instrumentation instrumentation) throws FileNotFoundException {
+                                   Instrumentation instrumentation) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException {
 
         HeapSettings.parse(args);
 
@@ -318,7 +323,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
     // recorders from the target process. 
 
     public static void agentmain(final String args,
-                                 final Instrumentation instrumentation) throws FileNotFoundException, InterruptedException, IOException, UnmodifiableClassException {
+                                 final Instrumentation instrumentation) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, InterruptedException, IOException, MalformedURLException, UnmodifiableClassException {
 
         initialize(args,
                    instrumentation);
@@ -391,7 +396,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
     // the target process on the java command line.
 
     public static void premain(String args,
-                               Instrumentation instrumentation) throws FileNotFoundException, UnmodifiableClassException {
+                               Instrumentation instrumentation) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException, UnmodifiableClassException {
 
         initialize(args,
                    instrumentation);

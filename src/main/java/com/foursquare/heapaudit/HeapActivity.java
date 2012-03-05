@@ -2,9 +2,9 @@ package com.foursquare.heapaudit;
 
 public class HeapActivity extends HeapRecorder {
 
-    public void record(String type,
-                       int count,
-                       long size) {
+    @Override public void record(String type,
+                                 int count,
+                                 long size) {
 
         String length = "";
 

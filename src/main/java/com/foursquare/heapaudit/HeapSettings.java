@@ -3,13 +3,26 @@ package com.foursquare.heapaudit;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 class HeapSettings {
 
-    public static void parse(String args) throws FileNotFoundException {
+    public static void parse(String args) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException {
+
+        timeout = -1;
+
+        conditional = false;
+
+        lock = null;
+
+        output = System.out;
+
+        recorderClass = null;
 
         toSuppressAuditing.clear();
 
@@ -79,6 +92,19 @@ class HeapSettings {
                         output = value.length() > 0 ? new PrintStream(stream) : System.out;
 
                     }
+              	    else if (value.startsWith("recorder=")) {
+
+                        String[] recorder = value.substring(9).split("@");
+
+                        ClassLoader loader = new URLClassLoader(new URL[] { new URL("file:" + recorder[1]) });
+
+                        recorderClass = loader.loadClass(recorder[0]);
+
+                        // Attempt to instantiate a copy to see if it works.
+
+                        HeapSummary test = (HeapSummary)recorderClass.newInstance();
+
+                    }
                     else if (value.equals("conditional")) {
 
                         conditional = true;
@@ -145,6 +171,10 @@ class HeapSettings {
     public static FileChannel lock = null;
 
     public static PrintStream output = System.out;
+
+    // The following specifies the class of the dynamically injected recorder.
+
+    public static Class<?> recorderClass = null;
 
     private final static ArrayList<Pattern> toSuppressAuditing = new ArrayList<Pattern>();
 

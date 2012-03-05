@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HeapQuantile extends HeapRecorder {
+public class HeapQuantile extends HeapSummary {
 
     // The following is a log2 lookup table for the hash function.
 
@@ -335,7 +335,7 @@ public class HeapQuantile extends HeapRecorder {
     // NOTE: Partial records due to in-flight allocations may occur.
 
     @HeapRecorder.Suppress public ArrayList<Stats> tally(boolean global,
-                                  boolean sorted) {
+                                                         boolean sorted) {
 
         Quantiles qType = new Quantiles();
 
@@ -386,10 +386,9 @@ public class HeapQuantile extends HeapRecorder {
 
     }
 
-    public String summarize(boolean global,
-                            String comments) {
+    public String summarize(boolean global) {
 
-        String summary = (comments == null) ? "HEAP============" : "HEAP: " + comments;
+        String summary = "HEAP: " + getId();
 
         for (Stats s: tally(global, true)) {
 
@@ -398,6 +397,12 @@ public class HeapQuantile extends HeapRecorder {
         }
 
         return summary;
+
+    }
+
+    @Override public String summarize() {
+
+        return summarize(true);
 
     }
 
