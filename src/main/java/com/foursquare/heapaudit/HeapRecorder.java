@@ -17,7 +17,9 @@ public abstract class HeapRecorder {
 
     protected static String friendly(String type) {
 
-        switch (type.charAt(0)) {
+        String t = type.replaceAll("^\\[*", "");
+
+        switch (t.charAt(0)) {
 
         case 'Z':
 
@@ -53,7 +55,7 @@ public abstract class HeapRecorder {
 
         default:
 
-            return type.replaceAll("^\\[*L", "").replaceAll(";$", "").replaceAll("/", ".");
+            return t.replaceAll("^L", "").replaceAll(";$", "").replaceAll("/", ".");
 
         }
 
