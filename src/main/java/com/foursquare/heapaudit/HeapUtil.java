@@ -155,7 +155,8 @@ public abstract class HeapUtil {
 
             for (int i = 1; i < type.length(); ++i) {
 
-                if (type.charAt(i) == '[') {
+                // note that "o" might be null if this was a multidimensional array with empty dims
+                if (type.charAt(i) == '[' && o != null) {
 
                     // The following assumes the size of array of array,
                     // including the overhead of the array bookkeeping itself
@@ -165,59 +166,61 @@ public abstract class HeapUtil {
                     overhead += sizeOf(o,
                                        "" + length + "[[L");
 
+                    // o[0] might be null if this was a multidimensional array with empty dims - if so, set length to 0
+
                     switch (type.charAt(i + 1)) {
 
                     case 'Z':
 
-                        length = ((boolean[])o[0]).length;
+                        length = (o[0] != null ? ((boolean[])o[0]).length : 0 );
 
                         break;
 
                     case 'B':
 
-                        length = ((byte[])o[0]).length;
+                        length = (o[0] != null ? ((byte[])o[0]).length : 0 );
 
                         break;
 
                     case 'C':
 
-                        length = ((char[])o[0]).length;
+                        length = (o[0] != null ? ((char[])o[0]).length : 0 );
 
                         break;
 
                     case 'S':
 
-                        length = ((short[])o[0]).length;
+                        length = (o[0] != null ? ((short[])o[0]).length : 0 );
 
                         break;
 
                     case 'I':
 
-                        length = ((int[])o[0]).length;
+                        length = (o[0] != null ? ((int[])o[0]).length : 0 );
 
                         break;
 
                     case 'J':
 
-                        length = ((long[])o[0]).length;
+                        length = (o[0] != null ? ((long[])o[0]).length : 0 );
 
                         break;
 
                     case 'F':
 
-                        length = ((float[])o[0]).length;
+                        length = (o[0] != null ? ((float[])o[0]).length : 0 );
 
                         break;
 
                     case 'D':
 
-                        length = ((double[])o[0]).length;
+                        length = (o[0] != null ? ((double[])o[0]).length : 0 );
 
                         break;
 
                     case 'L':
 
-                        length = ((Object[])o[0]).length;
+                        length = (o[0] != null ? ((Object[])o[0]).length : 0 );
 
                         break;
 
@@ -225,19 +228,31 @@ public abstract class HeapUtil {
 
                         o = (Object[])(o[0]);
 
-                        length = o.length;
+                        // make sure this is not a null array due to a multidimensional array with empty dims
+                        if( o != null ) {
+                            length = o.length;
 
-                        count *= length;
-
+                            count *= length;
+                        }
                     }
 
                 }
                 else {
 
-                    String name = type.substring(i);
+                    final String name;
+                    final long size;
 
-                    long size = overhead + count * sizeOf(o[0],
-                                                          "" + length + type.substring(i - 1));
+                    if(o != null && o[0] != null ) {
+                        name = type.substring(i);
+                        size = overhead + count * sizeOf(o[0],
+                                                              "" + length + type.substring(i - 1));
+                    }
+                    else {
+                        // patch things up so we record the right length, name and size when this was a multidimensional array with empty dims
+                        length = 1;
+                        name = type.substring(i-1);
+                        size = overhead;
+                    }
 
                     HeapRecorder.unwind();
 
