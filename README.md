@@ -171,6 +171,11 @@ startup. We subsequently ran HeapAudit with "-Ajrockit/.+" and everything
 returned back to normal. See [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java)
 for list of namespaces avoided by default.
 
+### Tutorials
+
+Check out some of the sample [tutorials](https://github.com/foursquare/heapaudit/blob/master/src/test/java/com/foursquare/heapaudit/tutorials/)
+and play around with the examples!
+
 ### Dependencies
 
 - [ASM](http://asm.ow2.org/)

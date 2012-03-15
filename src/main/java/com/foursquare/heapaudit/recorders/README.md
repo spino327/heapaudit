@@ -1,6 +1,7 @@
 The recorders sub-directory contains sample recorders which are bundled into the
 heaprecorders.jar library and can serve as alternative dynamically injected
-recorders.
+recorders. Sources in this sub-directory are not packed into the heapaudit.jar
+file.
 
 ### Injecting custom recorders
 
