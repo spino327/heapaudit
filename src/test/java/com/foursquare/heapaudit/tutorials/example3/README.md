@@ -10,8 +10,9 @@ After building the package, execute the following from the commandline under
 
 From a different commandline, run the following with the matching process id.
 
-	$ java -jar heapaudit.jar 999 -Icom.foursquare.heapaudit.tutorials.Example@allocateBar.+ -Xrecorder=com.foursquare.heapaudit.recorders.HeapTotal@heaprecorders.jar
-
+	$ java -jar heapaudit.jar 999 -Icom.foursquare.heapaudit.tutorials.Example@allocateBar.+
+	       -Xrecorder=com.foursquare.heapaudit.recorders.HeapTotal@heaprecorders.jar
+	Press <enter> to exit HeapAudit...
 In the first commandline, press enter to continue with the allocation.
 
 NOTE: You need to point to the file path for heapaudit.jar and heaprecorders.jar

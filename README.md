@@ -48,8 +48,7 @@ behavior can be extended by implementing the record method in [HeapRecorder](htt
 	    @Override public void record(String name,
 	                                 int count,
 	                                 long size) {
-	        System.out.println("Allocated " + name +
-	                           "[" + count + "] " + size + " bytes");
+	        System.out.println("Allocated " + name + "[" + count + "] " + size + " bytes");
 	    }
 	}
 
