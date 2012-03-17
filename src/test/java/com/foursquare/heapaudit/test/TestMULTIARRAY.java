@@ -48,8 +48,10 @@ public class TestMULTIARRAY extends TestUtil {
         int[][] arrayI = new int[3][];
 
         assertTrue(expect("[I",
-                3,
-                32));
+                          3,
+                          32));
+
+	assertTrue(empty());
 
     }
 
@@ -64,20 +66,26 @@ public class TestMULTIARRAY extends TestUtil {
         arrayI[2] = new int[5];
 
         assertTrue(expect("[I",
-                3,
-                32));
+                          3,
+                          32));
+
         assertTrue(expect("int",
-                5,
-                40));
+                          5,
+                          40));
+
         assertTrue(expect("int",
-                5,
-                40));
+                          5,
+                          40));
+
         assertTrue(expect("int",
-                5,
-                40));
+                          5,
+                          40));
+
         assertFalse(expect("int",
-                5,
-                40));
+                           5,
+                           40));
+
+        assertTrue(empty());
 
     }
 
@@ -92,20 +100,26 @@ public class TestMULTIARRAY extends TestUtil {
         arrayI[2] = new int[5][];
 
         assertTrue(expect("[[I",
-                3,
-                32));
+                          3,
+                          32));
+
         assertTrue(expect("[I",
-                5,
-                40));
+                          5,
+                          40));
+
         assertTrue(expect("[I",
-                5,
-                40));
+                          5,
+                          40));
+
         assertTrue(expect("[I",
-                5,
-                40));
+                          5,
+                          40));
+
         assertFalse(expect("[I",
-                5,
-                40));
+                           5,
+                           40));
+
+        assertTrue(empty());
 
     }
 
@@ -117,16 +131,16 @@ public class TestMULTIARRAY extends TestUtil {
         int[][][] arrayI = new int[3][5][];
 
         assertTrue(expect("[I",
-                15,
-                72));
+                          15,
+                          72));
 
         assertTrue(empty());
 
         arrayI[0][0] = new int[5];
 
         assertTrue(expect("I",
-                5,
-                40));
+                          5,
+                          40));
 
         assertTrue(empty());
         
@@ -140,16 +154,16 @@ public class TestMULTIARRAY extends TestUtil {
         int[][][][] arrayI = new int[3][5][][];
 
         assertTrue(expect("[[I",
-                15,
-                72));
+                          15,
+                          72));
 
         assertTrue(empty());
 
         arrayI[2][4] = new int[5][];
 
         assertTrue(expect("[I",
-                5,
-                40));
+                          5,
+                          40));
 
         assertTrue(empty());
 
@@ -157,8 +171,8 @@ public class TestMULTIARRAY extends TestUtil {
         arrayI[2][4] = new int[3][];
 
         assertTrue(expect("[I",
-                3,
-                32));
+                          3,
+                          32));
 
         assertTrue(empty());
 
@@ -167,12 +181,12 @@ public class TestMULTIARRAY extends TestUtil {
         arrayI[0][1] = new int[3][];
 
         assertTrue(expect("[I",
-                3,
-                32));
+                          3,
+                          32));
 
         assertTrue(expect("[I",
-                3,
-                32));
+                          3,
+                          32));
 
         assertTrue(empty());
 
@@ -186,8 +200,10 @@ public class TestMULTIARRAY extends TestUtil {
         TestChild[][] arrayL = new TestChild[1][];
 
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                1,
-                24));
+                          1,
+                          24));
+
+        assertTrue(empty());
 
     }
 
@@ -200,12 +216,14 @@ public class TestMULTIARRAY extends TestUtil {
         arrayL[0] = new TestChild[7];
 
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                1,
-                24));
-        assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                7,
-                48));
+                          1,
+                          24));
 
+        assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
+                          7,
+                          48));
+
+        assertTrue(empty());
 
     }
 
@@ -217,8 +235,10 @@ public class TestMULTIARRAY extends TestUtil {
         TestChild[][][] arrayL = new TestChild[1][][];
 
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                1,
-                24));
+                          1,
+                          24));
+
+        assertTrue(empty());
 
     }
 
@@ -231,11 +251,14 @@ public class TestMULTIARRAY extends TestUtil {
         arrayL[0] = new TestChild[7][];
 
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                1,
-                24));
+                          1,
+                          24));
+
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                7,
-                48));
+                          7,
+                          48));
+
+        assertTrue(empty());
 
     }
 
@@ -247,8 +270,10 @@ public class TestMULTIARRAY extends TestUtil {
         TestChild[][][] arrayL = new TestChild[1][7][];
 
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                7,
-                72));
+                          7,
+                          72));
+
+        assertTrue(empty());
 
     }
 
@@ -260,14 +285,17 @@ public class TestMULTIARRAY extends TestUtil {
         TestChild[][] arrayL = new TestChild[1][];
 
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                1,
-                24));
+                          1,
+                          24));
 
         TestChild[][] arrayL_2 = new TestChild[1][];
 
         assertTrue(expect("com.foursquare.heapaudit.test.TestChild",
-                1,
-                24));
+                          1,
+                          24));
+
+        assertTrue(empty());
+
     }
 
     @Test
@@ -278,8 +306,10 @@ public class TestMULTIARRAY extends TestUtil {
         char[][][][] arrayC = new char[10][10][][];
 
         assertTrue(expect("[[C",
-                100,
-                112));
+                          100,
+                          112));
+
+        assertTrue(empty());
 
     }
 

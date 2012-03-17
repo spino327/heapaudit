@@ -155,7 +155,9 @@ public abstract class HeapUtil {
 
             for (int i = 1; i < type.length(); ++i) {
 
-                // note that "o" might be null if this was a multidimensional array with empty dims
+                // note that "o" might be null if this was a multidimensional
+                // array with empty dims
+
                 if (type.charAt(i) == '[' && o != null) {
 
                     // The following assumes the size of array of array,
@@ -166,7 +168,8 @@ public abstract class HeapUtil {
                     overhead += sizeOf(o,
                                        "" + length + "[[L");
 
-                    // o[0] might be null if this was a multidimensional array with empty dims - if so, set length to 0
+                    // o[0] might be null if this was a multidimensional
+                    // array with empty dims - if so, set length to 0
 
                     switch (type.charAt(i + 1)) {
 
@@ -228,12 +231,17 @@ public abstract class HeapUtil {
 
                         o = (Object[])(o[0]);
 
-                        // make sure this is not a null array due to a multidimensional array with empty dims
-                        if( o != null ) {
+                        // make sure this is not a null array due to a
+                        // multidimensional array with empty dims
+
+                        if (o != null) {
+
                             length = o.length;
 
                             count *= length;
+
                         }
+
                     }
 
                 }
@@ -242,16 +250,26 @@ public abstract class HeapUtil {
                     final String name;
                     final long size;
 
-                    if(o != null && o[0] != null ) {
+                    if (o != null && o[0] != null) {
+
                         name = type.substring(i);
+
                         size = overhead + count * sizeOf(o[0],
-                                                              "" + length + type.substring(i - 1));
+                                                         "" + length + type.substring(i - 1));
+
                     }
                     else {
-                        // patch things up so we record the right length, name and size when this was a multidimensional array with empty dims
+
+                        // patch things up so we record the right length, name
+                        // and size when this was a multidimensional array with
+                        // empty dims
+
                         length = 1;
+
                         name = type.substring(i-1);
+
                         size = overhead;
+
                     }
 
                     HeapRecorder.unwind();
@@ -262,6 +280,7 @@ public abstract class HeapUtil {
                            size);
 
                     break;
+
                 }
 
             }
