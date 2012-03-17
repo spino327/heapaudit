@@ -2,8 +2,8 @@ package com.foursquare.heapaudit;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HeapQuantile extends HeapSummary {
 
@@ -77,7 +77,7 @@ public class HeapQuantile extends HeapSummary {
 
     }
 
-    private class Quantiles extends HashMap<String, HashMap<Integer, Quantile>> {
+    private class Quantiles extends ConcurrentHashMap<String, ConcurrentHashMap<Integer, Quantile>> {
 
         // The following do not need to be synchronized because everything is local to the
         // current thread.
@@ -86,11 +86,11 @@ public class HeapQuantile extends HeapSummary {
                            int count,
                            long size) {
 
-            HashMap<Integer, Quantile> quantiles = get(type);
+            ConcurrentHashMap<Integer, Quantile> quantiles = get(type);
 
             if (quantiles == null) {
 
-                quantiles = new HashMap<Integer, Quantile>();
+                quantiles = new ConcurrentHashMap<Integer, Quantile>();
 
                 put(type,
                     quantiles);
@@ -263,15 +263,15 @@ public class HeapQuantile extends HeapSummary {
     private void merge(Quantiles combined,
                        Quantiles individual) {
 
-        for (Map.Entry<String, HashMap<Integer, Quantile>> s: individual.entrySet()) {
+        for (Map.Entry<String, ConcurrentHashMap<Integer, Quantile>> s: individual.entrySet()) {
 
             String type = friendly(s.getKey());
 
-            HashMap<Integer, Quantile> quantiles = combined.get(type);
+            ConcurrentHashMap<Integer, Quantile> quantiles = combined.get(type);
 
             if (quantiles == null) {
 
-                quantiles = new HashMap<Integer, Quantile>();
+                quantiles = new ConcurrentHashMap<Integer, Quantile>();
 
                 combined.put(type,
                              quantiles);
@@ -316,7 +316,7 @@ public class HeapQuantile extends HeapSummary {
     private void flatten(ArrayList<Stats> summary,
                          Quantiles quantiles) {
 
-        for (Map.Entry<String, HashMap<Integer, Quantile>> s: quantiles.entrySet()) {
+        for (Map.Entry<String, ConcurrentHashMap<Integer, Quantile>> s: quantiles.entrySet()) {
 
             for (Quantile q: s.getValue().values()) {
 
@@ -343,17 +343,25 @@ public class HeapQuantile extends HeapSummary {
 
         if (global) {
 
-            for (Quantiles quantiles: statsType) {
+            synchronized (statsType) {
 
-                merge(qType,
-                      quantiles);
+                for (Quantiles quantiles: statsType) {
+
+                    merge(qType,
+                          quantiles);
+
+                }
 
             }
 
-            for (Quantiles quantiles: statsArray) {
+            synchronized (statsArray) {
 
-                merge(qArray,
-                      quantiles);
+                for (Quantiles quantiles: statsArray) {
+
+                    merge(qArray,
+                          quantiles);
+
+                }
 
             }
 
