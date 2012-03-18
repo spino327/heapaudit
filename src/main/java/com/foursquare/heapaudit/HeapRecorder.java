@@ -3,6 +3,7 @@ package com.foursquare.heapaudit;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.instrument.Instrumentation;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HeapRecorder {
 
@@ -14,6 +15,11 @@ public abstract class HeapRecorder {
     abstract public void record(String type,
                                 int count,
                                 long size);
+
+    // The following keeps track of how many times each recorder has been
+    // registered locally. When registered globally, this is not incremented.
+
+    protected AtomicInteger registrations = new AtomicInteger();
 
     protected static String friendly(String type) {
 
@@ -133,7 +139,7 @@ public abstract class HeapRecorder {
 
     }
 
-    public static synchronized void register(HeapRecorder recorder) {
+    private static synchronized void register(HeapRecorder recorder) {
 
         // The following round about way of inserting the recorder into
         // globalRecorders is because the consuming end of this collection is
@@ -153,7 +159,7 @@ public abstract class HeapRecorder {
 
     }
 
-    public static synchronized void unregister(HeapRecorder recorder) {
+    private static synchronized void unregister(HeapRecorder recorder) {
 
         // The following round about way of removing the recorder from
         // globalRecorders is because the consuming end of this collection is
@@ -184,6 +190,8 @@ public abstract class HeapRecorder {
         else {
 
             localRecorders.get().recorders.add(recorder);
+
+            recorder.registrations.incrementAndGet();
 
         }
 

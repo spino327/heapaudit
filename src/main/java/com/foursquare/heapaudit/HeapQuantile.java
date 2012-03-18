@@ -398,6 +398,14 @@ public class HeapQuantile extends HeapSummary {
 
         String summary = "HEAP: " + getId();
 
+        int r = registrations.get();
+
+        if (r > 0) {
+
+            summary += " x" + r;
+
+        }
+
         for (Stats s: tally(global, true)) {
 
             summary += "\n      - " + s.toString();

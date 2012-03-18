@@ -466,7 +466,8 @@ public abstract class HeapUtil {
 
         if (recorder != null) {
 
-            HeapRecorder.register(recorder);
+            HeapRecorder.register(recorder,
+                                  false);
 
         }
 
@@ -482,7 +483,8 @@ public abstract class HeapUtil {
 
         if (recorder != null) {
 
-            HeapRecorder.unregister(recorder);
+            HeapRecorder.unregister(recorder,
+                                    false);
 
         }
 
