@@ -78,7 +78,7 @@ public class HeapCollection<E> extends AbstractCollection<E> {
 
         for (int i = 0; i < index; ++i) {
 
-            if (objects[i].equals(e)) {
+            if (e.equals(objects[i])) {
 
                 objects[i] = null;
 
