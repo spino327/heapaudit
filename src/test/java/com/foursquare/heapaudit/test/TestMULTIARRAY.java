@@ -313,4 +313,20 @@ public class TestMULTIARRAY extends TestUtil {
 
     }
 
+	/**
+	 * Test creating a multidim array with all zero length dimensions.
+	 */
+	@Test public void MULTIARRAY_C_zeroes() {
+		
+		clear();
+		
+		char[][] arrayC = new char[0][0];
+		
+		assertTrue(expect("char",
+						  15,
+						  0));
+		
+		assertTrue(empty());
+		
+	}
 }
