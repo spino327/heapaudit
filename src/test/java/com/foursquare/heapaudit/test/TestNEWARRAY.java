@@ -120,4 +120,19 @@ public class TestNEWARRAY extends TestUtil {
 
     }
 
+    @Test public void NEWARRAY_Z_zeroLength() {
+
+	clear();
+
+	boolean[] arrayZ = new boolean[0];
+
+	assertTrue(expect("boolean",
+			  0,
+			  16));
+
+	assertTrue(empty());
+
+    }
+
+
 }
