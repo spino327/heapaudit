@@ -169,71 +169,73 @@ public abstract class HeapUtil {
                                        "" + length + "[[L");
 
                     // o[0] might be null if this was a multidimensional
-                    // array with empty dims - if so, set length to 0
+                    // array with empty dims - if so, set length to 0.
+                    // In addition, o.length might == 0 if the dimension was
+                    // explicitly set to zero.
 
                     switch (type.charAt(i + 1)) {
 
                     case 'Z':
 
-                        length = (o[0] != null ? ((boolean[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((boolean[])o[0]).length : 0 );
 
                         break;
 
                     case 'B':
 
-                        length = (o[0] != null ? ((byte[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((byte[])o[0]).length : 0 );
 
                         break;
 
                     case 'C':
 
-                        length = (o[0] != null ? ((char[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((char[])o[0]).length : 0 );
 
                         break;
 
                     case 'S':
 
-                        length = (o[0] != null ? ((short[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((short[])o[0]).length : 0 );
 
                         break;
 
                     case 'I':
 
-                        length = (o[0] != null ? ((int[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((int[])o[0]).length : 0 );
 
                         break;
 
                     case 'J':
 
-                        length = (o[0] != null ? ((long[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((long[])o[0]).length : 0 );
 
                         break;
 
                     case 'F':
 
-                        length = (o[0] != null ? ((float[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((float[])o[0]).length : 0 );
 
                         break;
 
                     case 'D':
 
-                        length = (o[0] != null ? ((double[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((double[])o[0]).length : 0 );
 
                         break;
 
                     case 'L':
 
-                        length = (o[0] != null ? ((Object[])o[0]).length : 0 );
+                        length = (o.length > 0 && o[0] != null ? ((Object[])o[0]).length : 0 );
 
                         break;
 
                     default:
 
-                        o = (Object[])(o[0]);
+                        // o.length can be zero if a dimension was explicitly set to zero
+                        o = (o.length > 0 ? (Object[])(o[0]) : null );
 
-                        // make sure this is not a null array due to a
-                        // multidimensional array with empty dims
-
+                        // make sure this is not null due to a
+                        // multidimensional array with empty or zero length dims
                         if (o != null) {
 
                             length = o.length;
@@ -250,7 +252,8 @@ public abstract class HeapUtil {
                     final String name;
                     final long size;
 
-                    if (o != null && o[0] != null) {
+                    // check for o.length being zero - this can happen if an array was created as [0]
+                    if (o != null && o.length > 0 && o[0] != null) {
 
                         name = type.substring(i);
 
@@ -262,7 +265,7 @@ public abstract class HeapUtil {
 
                         // patch things up so we record the right length, name
                         // and size when this was a multidimensional array with
-                        // empty dims
+                        // empty or zero length dims
 
                         length = 1;
 
