@@ -110,36 +110,9 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
         boolean hasInject = false;
 
-        VirtualMachine vm = null;
-
         if (args.length > 0) {
 
-            String process = args[0];
-
-            // Iterate over all active virtual machines and attempt to locate
-            // the first target process that matches by display name regex.
-
-            for (VirtualMachineDescriptor vmd: VirtualMachine.list()) {
-
-                if (vmd.displayName().matches(process)) {
-
-                    vm = VirtualMachine.attach(vmd);
-
-                    break;
-
-                }
-
-            }
-
-            if (vm == null) {
-
-                // Did not locate virtual machine by pattern matching over the
-                // display name. Assume it is specified as the process id and
-                // proceed to attach to the target process.
-
-                id = process;
-
-            }
+            id = args[0];
 
         }
         else {
@@ -147,9 +120,9 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             // Show interactive menu for selecting which virtual machine to
             // attach to.
 
-            for (VirtualMachineDescriptor vmd: VirtualMachine.list()) {
+            for (VirtualMachineDescriptor vm: VirtualMachine.list()) {
 
-                System.out.println(vmd.id() + '\t' + vmd.displayName());
+                System.out.println(vm.id() + '\t' + vm.displayName());
 
             }
 
@@ -157,13 +130,11 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
         }
 
+        VirtualMachine vm = null;
+
         try {
 
-            if (vm == null) {
-
-                vm = VirtualMachine.attach(id);
-
-            }
+            vm = VirtualMachine.attach(id);
 
             String[] options = null;
 
