@@ -147,7 +147,7 @@
               <goal>verify</goal>
             </goals>
             <configuration>
-              <argLine>-javaagent:${project.build.directory}/${project.artifactId}-${project.version}.jar="-Xconditional -Aorg/apache/maven/.+ -Ajunit/.+ -Aorg/junit/.+"</argLine>
+              <argLine>-javaagent:${project.build.directory}/${project.artifactId}-${project.version}.jar="-Xconditional -Aorg/apache/maven/.+ -Ajunit/.+ -Aorg/junit/.+" -Djavaagent=${project.build.directory}/${project.artifactId}-${project.version}.jar</argLine>
               <workingDirectory>${project.build.directory}</workingDirectory>
               <includes>
                 <include>**/Test*.java</include>
