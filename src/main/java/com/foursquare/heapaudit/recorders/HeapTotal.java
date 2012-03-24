@@ -21,7 +21,7 @@ public class HeapTotal extends HeapSummary {
 
     @Override public String summarize() {
 
-        return getId() + ": " + bytes + " bytes / " + occurrences;
+        return getId() + " x" + registrations.get() + ": " + bytes + " bytes / " + occurrences;
 
     }
 
