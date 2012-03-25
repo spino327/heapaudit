@@ -350,121 +350,121 @@ public class TestMULTIARRAY extends TestUtil {
 
     }
 
-	/**
-	 * Test creating a multidim array with all zero length dimensions.
-	 */
-	@Test public void MULTIARRAY_C_zeroes() {
-		
-		clear();
-		
-		char[][] arrayC = new char[0][0];
-		
-		assertTrue(expect("char",
-						  0,
-						  16));
-		
-		assertTrue(empty());
-	}
+    /**
+     * Test creating a multidim array with all zero length dimensions.
+     */
+    @Test public void MULTIARRAY_C_zeroes() {
+	
+	clear();
+	
+	char[][] arrayC = new char[0][0];
+	
+	assertTrue(expect("char",
+			  0,
+			  16));
+	
+	assertTrue(empty());
+    }
 
     /**
-	 * Test creating a multidim array with 1st dim zero length, and the
+     * Test creating a multidim array with 1st dim zero length, and the
      * second dimension empty.
-	 */
-	@Test public void MULTIARRAY_C_zeroes_and_empty() {
+     */
+    @Test public void MULTIARRAY_C_zeroes_and_empty() {
 
-		clear();
+	clear();
 
-		char[][] arrayC = new char[0][];
+	char[][] arrayC = new char[0][];
 
-		assertTrue(expect("char",
-						  0,
-						  16));
-
-		assertTrue(empty());
-	}
+	assertTrue(expect("char",
+			  0,
+			  16));
+	
+	assertTrue(empty());
+    }
 
     /**
-	 * Test creating a multidim array with 1st dim zero length, and the
+     * Test creating a multidim array with 1st dim zero length, and the
      * second and third dimension empty.
-	 */
-	@Test public void MULTIARRAY_C_zeroes_and_2nd_and_3rd_empty() {
-
-		clear();
-
-		char[][][] arrayC = new char[0][][];
-
-		assertTrue(expect("char",
-						  0,
-						  16));
-
-		assertTrue(empty());
-	}
-
+     */
+    @Test public void MULTIARRAY_C_zeroes_and_2nd_and_3rd_empty() {
+	
+	clear();
+	
+	char[][][] arrayC = new char[0][][];
+	
+	assertTrue(expect("char",
+			  0,
+			  16));
+	
+	assertTrue(empty());
+    }
+    
     /**
-	 * Test creating a multidim array with 1st & 2nd dim zero length, and the
+     * Test creating a multidim array with 1st & 2nd dim zero length, and the
      * third dimension empty.
-	 */
-	@Test public void MULTIARRAY_C_zeroes_and_3rd_empty() {
-
-		clear();
-
-		char[][][] arrayC = new char[0][0][];
-
-		assertTrue(expect("char",
-						  0,
-						  16));
-
-		assertTrue(empty());
-	}
-
+     */
+    @Test public void MULTIARRAY_C_zeroes_and_3rd_empty() {
+	
+	clear();
+	
+	char[][][] arrayC = new char[0][0][];
+	
+	assertTrue(expect("char",
+			  0,
+			  16));
+	
+	assertTrue(empty());
+    }
+    
     /**
-	 * Test creating a multidim array with 1st & 2nd dim zero length, and the
+     * Test creating a multidim array with 1st & 2nd dim zero length, and the
      * third & fourth dimension empty.
-	 */
-	@Test public void FourDeep_MULTIARRAY_C_zeroes_and_3rd_and_4th_empty() {
-
-		clear();
-
-		char[][][][] arrayC = new char[0][0][][];
-
-		assertTrue(expect("char",
-						  0,
-						  16));
-
-		assertTrue(empty());
-	}
-
+     */
+    @Test public void FourDeep_MULTIARRAY_C_zeroes_and_3rd_and_4th_empty() {
+	
+	clear();
+	
+	char[][][][] arrayC = new char[0][0][][];
+	
+	assertTrue(expect("char",
+			  0,
+			  16));
+	
+	assertTrue(empty());
+    }
+    
     /**
-	 * Test creating a multidim array with 1st to 3rd dim zero length, and the
+     * Test creating a multidim array with 1st to 3rd dim zero length, and the
      * fourth dimension empty.
-	 */
-	@Test public void FourDeep_MULTIARRAY_C_zeroes_and_4th_empty() {
-
-		clear();
-
-		char[][][][] arrayC = new char[0][0][0][];
-
-		assertTrue(expect("char",
-						  0,
-						  16));
-
-		assertTrue(empty());
-	}
-
+     */
+    @Test public void FourDeep_MULTIARRAY_C_zeroes_and_4th_empty() {
+	
+	clear();
+	
+	char[][][][] arrayC = new char[0][0][0][];
+	
+	assertTrue(expect("char",
+			  0,
+			  16));
+	
+	assertTrue(empty());
+    }
+    
     /**
-	 * Test creating a multidim array with all four dims set to zero length.
-	 */
-	@Test public void FourDeep_MULTIARRAY_C_all_zero_length() {
-
-		clear();
-
-		char[][][][] arrayC = new char[0][0][0][0];
-
-		assertTrue(expect("char",
-						  0,
-						  16));
-
-		assertTrue(empty());
-	}
-
+     * Test creating a multidim array with all four dims set to zero length.
+     */
+    @Test public void FourDeep_MULTIARRAY_C_all_zero_length() {
+	
+	clear();
+	
+	char[][][][] arrayC = new char[0][0][0][0];
+	
+	assertTrue(expect("char",
+			  0,
+			  16));
+	
+	assertTrue(empty());
+    }
+    
 }
