@@ -20,7 +20,7 @@ public abstract class HeapUtil {
 
         if (debug) {
 
-            log("\t" + text);
+            log(text);
 
         }
 

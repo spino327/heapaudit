@@ -32,7 +32,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         this.injectRecorder = injectRecorder && HeapUtil.inject(id);
 
         log(debugAuditing,
-            "\tMETHOD " + id);
+            "\t{ # METHOD " + id);
 
     }
 
@@ -55,7 +55,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public AnnotationVisitor visitAnnotationDefault() {
 
         log(debugAuditing,
-            "visitAnnotationDefault()");
+            "\t\tvisitAnnotationDefault()");
 
         return mv.visitAnnotationDefault();
 
@@ -65,7 +65,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                              boolean visible) {
 
         log(debugAuditing,
-            "visitAnnotation(" + desc + ", " + visible + ")");
+            "\t\tvisitAnnotation(" + desc + ", " + visible + ")");
 
         if (desc.equals("Lcom/foursquare/heapaudit/HeapRecorder$Suppress;")) {
 
@@ -83,7 +83,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                                                       boolean visible) {
 
         log(debugAuditing,
-            "visitParameterAnnotation()");
+            "\t\tvisitParameterAnnotation()");
 
         return mv.visitParameterAnnotation(parameter,
                                            desc,
@@ -93,7 +93,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
     public void visitAttribute(Attribute attr) {
 
         log(debugAuditing,
-            "visitAttribute(" + attr.type + ")");
+            "\t\tvisitAttribute(" + attr.type + ")");
 
         mv.visitAttribute(attr);
 
@@ -106,7 +106,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitCode() " + source + ":" + id);
+            "\t\tvisitCode() " + source + ":" + id);
 
         visitEnter();
 
@@ -121,7 +121,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitFrame()");
+            "\t\tvisitFrame()");
 
         mv.visitFrame(type,
                       nLocal,
@@ -136,7 +136,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
          log(debugAuditing,
             traceAuditing,
             mv,
-            "visitInsn(" + opcode + ")");
+            "\t\tvisitInsn(" + opcode + ")");
 
         switch (opcode) {
 
@@ -167,7 +167,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitLdcInsn(" + cst + ")");
+            "\t\tvisitLdcInsn(" + cst + ")");
 
         mv.visitLdcInsn(cst);
 
@@ -179,7 +179,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitIincInsn()");
+            "\t\tvisitIincInsn()");
 
         mv.visitIincInsn(var,
                          increment);
@@ -192,7 +192,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitVarInsn(" + opcode + ", " + var + ")");
+            "\t\tvisitVarInsn(" + opcode + ", " + var + ")");
 
         switch (opcode) {
 
@@ -217,7 +217,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitFieldInsn(" + opcode + ", " + owner + ", " + name + ", " + desc + ")");
+            "\t\tvisitFieldInsn(" + opcode + ", " + owner + ", " + name + ", " + desc + ")");
 
         mv.visitFieldInsn(opcode,
                           owner,
@@ -232,7 +232,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitIntInsn(" + opcode + ", " + operand + ")");
+            "\t\tvisitIntInsn(" + opcode + ", " + operand + ")");
 
         switch (opcode) {
 
@@ -277,7 +277,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitTypeInsn(" + opcode + ", " + type + ")");
+            "\t\tvisitTypeInsn(" + opcode + ", " + type + ")");
 
         switch (opcode) {
 
@@ -328,7 +328,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitMethodInsn(" + opcode + ", " + owner + ", " + name + ", " + signature + ")");
+            "\t\tvisitMethodInsn(" + opcode + ", " + owner + ", " + name + ", " + signature + ")");
 
         switch (opcode) {
 
@@ -488,7 +488,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitMultiANewArrayInsn(" + desc + ", " + dims + ")");
+            "\t\tvisitMultiANewArrayInsn(" + desc + ", " + dims + ")");
 
         mv.visitMultiANewArrayInsn(desc,
                                    dims);
@@ -506,7 +506,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitJumpInsn(" + opcode + ", " + label + ")");
+            "\t\tvisitJumpInsn(" + opcode + ", " + label + ")");
 
         mv.visitJumpInsn(opcode,
                          label);
@@ -520,7 +520,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitLookupSwitchInsn()");
+            "\t\tvisitLookupSwitchInsn()");
 
         mv.visitLookupSwitchInsn(dlft,
                                  keys,
@@ -536,7 +536,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitTableSwitchInsn()");
+            "\t\tvisitTableSwitchInsn()");
 
         mv.visitTableSwitchInsn(min,
                                 max,
@@ -550,7 +550,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitLabel()" + source + ":" + label);
+            "\t\tvisitLabel() " + source + ":" + label);
 
         mv.visitLabel(label);
 
@@ -564,7 +564,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitTryCatchBlock()");
+            "\t\tvisitTryCatchBlock()");
 
         mv.visitTryCatchBlock(start,
                               end,
@@ -584,7 +584,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitLocalVariable(" + name + ")");
+            "\t\tvisitLocalVariable(" + name + ")");
 
         mv.visitLocalVariable(name,
                               desc,
@@ -601,7 +601,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitLineNumber() " + source + ":" + start + "#" + line);
+            "\t\tvisitLineNumber() " + source + ":" + start + "#" + line);
 
         mv.visitLineNumber(line,
                            start);
@@ -614,7 +614,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitMaxs(" + maxStack + ", " + maxLocals + ")");
+            "\t\tvisitMaxs(" + maxStack + ", " + maxLocals + ")");
 
         lvs.declare();
 
@@ -628,7 +628,7 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
         log(debugAuditing,
             traceAuditing,
             mv,
-            "visitEnd()");
+            "\t\tvisitEnd()\n\t}");
 
         mv.visitEnd();
 
