@@ -60,19 +60,19 @@ The following example shows how to register the HeapActivity recorder across all
 threads. The output will display as allocations occur.
 
 	HeapActivity r = new HeapActivity();
-	HeapRecorder.register(r, true);
+	HeapRecorder.register(r, HeapRecorder.Threading.Global);
 	MyObject o = new MyObject();
-	HeapRecorder.unregister(r, true);
+	HeapRecorder.unregister(r, HeapRecorder.Threading.Global);
 
 The HeapQuantile recorder requires an extra step at the end to tally up the
 results. The following example shows how to register the HeapQuantile recorder
 only on the current thread and displays the summary at the end.
 
 	HeapQuantile r = new HeapQuantile();
-	HeapRecorder.register(r, false);
+	HeapRecorder.register(r, HeapRecorder.Threading.Local);
 	MyObject o = new MyObject();
-	HeapRecorder.unregister(r, false);
-	for (HeapQuantile.Stats s: r.tally(false, true)) System.out.println(s);
+	HeapRecorder.unregister(r, HeapRecorder.Threading.Local);
+	for (HeapQuantile.Stats s: r.tally(HeapRecorder.Threading.Local, true)) System.out.println(s);
 
 ### Launching the HeapAudit java agent
 

@@ -15,12 +15,12 @@ public class Static extends Example {
         allocateFoo();
 
         HeapQuantile recorder = new HeapQuantile();
-        HeapRecorder.register(recorder, false);
+        HeapRecorder.register(recorder, HeapRecorder.Threading.Local);
 
         allocateBar();
 
-        HeapRecorder.unregister(recorder, false);
-        System.out.println(recorder.summarize(false));
+        HeapRecorder.unregister(recorder, HeapRecorder.Threading.Local);
+        System.out.println(recorder.summarize(HeapRecorder.Threading.Local));
 
     }
 

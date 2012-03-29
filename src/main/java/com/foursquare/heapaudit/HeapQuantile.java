@@ -334,14 +334,14 @@ public class HeapQuantile extends HeapSummary {
     // The following tallies the quantile statistics across all threads.
     // NOTE: Partial records due to in-flight allocations may occur.
 
-    @HeapRecorder.Suppress public ArrayList<Stats> tally(boolean global,
+    @HeapRecorder.Suppress public ArrayList<Stats> tally(Threading threading,
                                                          boolean sorted) {
 
         Quantiles qType = new Quantiles();
 
         Quantiles qArray = new Quantiles();
 
-        if (global) {
+        if (threading == Threading.Global) {
 
             synchronized (statsType) {
 
@@ -394,7 +394,7 @@ public class HeapQuantile extends HeapSummary {
 
     }
 
-    public String summarize(boolean global) {
+    public String summarize(Threading threading) {
 
         String summary = "HEAP: " + getId();
 
@@ -406,7 +406,8 @@ public class HeapQuantile extends HeapSummary {
 
         }
 
-        for (Stats s: tally(global, true)) {
+        for (Stats s: tally(threading,
+                            true)) {
 
             summary += "\n      - " + s.toString();
 
@@ -418,7 +419,7 @@ public class HeapQuantile extends HeapSummary {
 
     @Override public String summarize() {
 
-        return summarize(true);
+        return summarize(Threading.Global);
 
     }
 

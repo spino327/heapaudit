@@ -179,10 +179,24 @@ public abstract class HeapRecorder {
 
     }
 
-    public static void register(HeapRecorder recorder,
-                                boolean global) {
+    // The following describes how the recorder should be registered.
 
-        if (global) {
+    public enum Threading {
+
+        // Registered across all threads in the process.
+
+        Global,
+
+        // Registered on the local thread only.
+
+	Local,
+
+    }
+
+    public static void register(HeapRecorder recorder,
+                                Threading threading) {
+
+        if (threading == Threading.Global) {
 
             register(recorder);
 
@@ -198,9 +212,9 @@ public abstract class HeapRecorder {
     }
 
     public static void unregister(HeapRecorder recorder,
-                                  boolean global) {
+                                  Threading threading) {
 
-        if (global) {
+        if (threading == Threading.Global) {
 
             unregister(recorder);
 

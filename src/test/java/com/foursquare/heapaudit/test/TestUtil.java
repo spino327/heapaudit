@@ -7,14 +7,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
     public TestUtil() {
 
-	this(false);
+	this(HeapRecorder.Threading.Local);
 
     }
 
-    public TestUtil(boolean global) {
+    public TestUtil(HeapRecorder.Threading threading) {
 
 	HeapRecorder.register(recorder,
-			      global);
+			      threading);
 
     }
 

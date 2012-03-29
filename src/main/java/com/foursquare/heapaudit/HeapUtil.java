@@ -470,7 +470,7 @@ public abstract class HeapUtil {
         if (recorder != null) {
 
             HeapRecorder.register(recorder,
-                                  false);
+                                  HeapRecorder.Threading.Local);
 
         }
 
@@ -487,7 +487,7 @@ public abstract class HeapUtil {
         if (recorder != null) {
 
             HeapRecorder.unregister(recorder,
-                                    false);
+                                    HeapRecorder.Threading.Local);
 
         }
 
