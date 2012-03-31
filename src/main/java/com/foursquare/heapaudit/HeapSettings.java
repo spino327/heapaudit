@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 class HeapSettings {
 
-    public static void parse(String args) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException {
+    static void parse(String args) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException {
 
         timeout = -1;
 
@@ -158,7 +158,7 @@ class HeapSettings {
     // The timeout specifies how many milliseconds to wait before exiting from
     // the dynamic use case.
 
-    public static int timeout = -1;
+    static int timeout = -1;
 
     // The conditional setting determines whether to optimize for tradeoffs by
     // adding extra bytecode instructions to check and potentially skip the code
@@ -166,15 +166,15 @@ class HeapSettings {
     // always have at least one recorder present, then setting conditional to
     // false can avoid the checks.
 
-    public static boolean conditional = false;
+    static boolean conditional = false;
 
-    public static FileChannel lock = null;
+    static FileChannel lock = null;
 
-    public static PrintStream output = System.out;
+    static PrintStream output = System.out;
 
     // The following specifies the class of the dynamically injected recorder.
 
-    public static Class<?> recorderClass = null;
+    static Class<?> recorderClass = null;
 
     private final static ArrayList<Pattern> toSuppressAuditing = new ArrayList<Pattern>();
 
@@ -213,8 +213,8 @@ class HeapSettings {
 
     }
 
-    public static boolean shouldSuppressAuditing(String classPath,
-                                                 String methodName) {
+    static boolean shouldSuppressAuditing(String classPath,
+                                          String methodName) {
 
         return should(toSuppressAuditing,
                       classPath,
@@ -222,8 +222,8 @@ class HeapSettings {
 
     }
 
-    public static boolean shouldAvoidAuditing(String classPath,
-                                              String methodName) {
+    static boolean shouldAvoidAuditing(String classPath,
+                                       String methodName) {
 
         return should(toAvoidAuditing,
                       classPath,
@@ -234,8 +234,8 @@ class HeapSettings {
 
     }
 
-    public static boolean shouldDebugAuditing(String classPath,
-                                            String methodName) {
+    static boolean shouldDebugAuditing(String classPath,
+                                       String methodName) {
 
         return should(toDebugAuditing,
                       classPath,
@@ -243,8 +243,8 @@ class HeapSettings {
 
     }
 
-    public static boolean shouldTraceAuditing(String classPath,
-                                              String methodName) {
+    static boolean shouldTraceAuditing(String classPath,
+                                       String methodName) {
 
         return should(toTraceAuditing,
                       classPath,
@@ -252,8 +252,8 @@ class HeapSettings {
 
     }
 
-    public static boolean shouldInjectRecorder(String classPath,
-                                               String methodName) {
+    static boolean shouldInjectRecorder(String classPath,
+                                        String methodName) {
 
         return should(toInjectRecorder,
                       classPath,

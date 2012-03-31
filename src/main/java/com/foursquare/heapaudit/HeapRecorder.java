@@ -72,7 +72,7 @@ public abstract class HeapRecorder {
 
     public static boolean isAuditing = false;
 
-    public static Instrumentation instrumentation = null;
+    static Instrumentation instrumentation = null;
 
     private static HeapCollection<HeapRecorder> globalRecorders = new HeapCollection<HeapRecorder>();
 
@@ -115,7 +115,7 @@ public abstract class HeapRecorder {
 
     }
 
-    public static HeapRecorder[] getRecorders(Object context) {
+    static HeapRecorder[] getRecorders(Object context) {
 
         HeapCollection<HeapRecorder> localRecorders = ((NestedRecorders)context).recorders;
 

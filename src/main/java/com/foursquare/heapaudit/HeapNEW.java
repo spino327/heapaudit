@@ -19,11 +19,11 @@ class HeapNEW extends HeapUtil {
     // uninitialized newly allocated object and all the parameter values for the
     // constructor arguments.
 
-    public static void before(boolean debug,
-                              boolean trace,
-                              MethodAdapter mv,
-                              HeapVariables lvs,
-                              String signature) {
+    static void before(boolean debug,
+                       boolean trace,
+                       MethodAdapter mv,
+                       HeapVariables lvs,
+                       String signature) {
 
         log(debug,
             trace,
@@ -70,10 +70,10 @@ class HeapNEW extends HeapUtil {
 
     }
 
-    public static void after(boolean debug,
-                             boolean trace,
-                             MethodAdapter mv,
-                             String owner) {
+    static void after(boolean debug,
+                      boolean trace,
+                      MethodAdapter mv,
+                      String owner) {
 
         log(debug,
             trace,

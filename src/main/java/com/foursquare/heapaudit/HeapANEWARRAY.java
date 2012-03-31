@@ -10,10 +10,10 @@ class HeapANEWARRAY extends HeapUtil {
     // the top of the stack contains the number of elements in the array and
     // returns a reference to the newly allocated array object.
 
-    public static void before(boolean debug,
-                              boolean trace,
-                              MethodAdapter mv,
-                              String type) {
+    static void before(boolean debug,
+                       boolean trace,
+                       MethodAdapter mv,
+                       String type) {
 
         log(debug,
             trace,
@@ -26,10 +26,10 @@ class HeapANEWARRAY extends HeapUtil {
 
     }
 
-    public static void after(boolean debug,
-                             boolean trace,
-                             MethodAdapter mv,
-                             String type) {
+    static void after(boolean debug,
+                      boolean trace,
+                      MethodAdapter mv,
+                      String type) {
 
         log(debug,
             trace,

@@ -9,14 +9,14 @@ import org.objectweb.asm.Opcodes;
 
 public abstract class HeapUtil {
 
-    public static void log(String text) {
+    static void log(String text) {
 
         HeapSettings.output.println(text);
 
     }
 
-    public static void log(boolean debug,
-                           String text) {
+    static void log(boolean debug,
+                    String text) {
 
         if (debug) {
 
@@ -26,10 +26,10 @@ public abstract class HeapUtil {
 
     }
 
-    public static void log(boolean debug,
-                           boolean trace,
-                           MethodAdapter mv,
-                           String text) {
+    static void log(boolean debug,
+                    boolean trace,
+                    MethodAdapter mv,
+                    String text) {
 
         log(debug,
             text);
@@ -449,7 +449,7 @@ public abstract class HeapUtil {
 
     }
 
-    public static void dump() {
+    static void dump() {
 
         for (HeapSummary recorder: recorders.values()) {
 

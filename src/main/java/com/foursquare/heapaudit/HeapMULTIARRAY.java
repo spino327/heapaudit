@@ -10,10 +10,10 @@ class HeapMULTIARRAY extends HeapUtil {
     // visitMultiANewArrayInsn where it returns a reference to the newly
     // allocated multi-dimension array object.
 
-    public static void after(boolean debug,
-                             boolean trace,
-                             MethodAdapter mv,
-                             String desc) {
+    static void after(boolean debug,
+                      boolean trace,
+                      MethodAdapter mv,
+                      String desc) {
 
         log(debug,
             trace,

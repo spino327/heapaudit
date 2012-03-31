@@ -11,9 +11,9 @@ class HeapNEWINSTANCE extends HeapUtil {
     // the stack contains the name of the class and returns a reference to the
     // newly allocated class object.
 
-    public static void before(boolean debug,
-                              boolean trace,
-                              MethodAdapter mv) {
+    static void before(boolean debug,
+                       boolean trace,
+                       MethodAdapter mv) {
 
         log(debug,
             trace,
@@ -30,9 +30,9 @@ class HeapNEWINSTANCE extends HeapUtil {
 
     }
 
-    public static void after(boolean debug,
-                             boolean trace,
-                             MethodAdapter mv) {
+    static void after(boolean debug,
+                      boolean trace,
+                      MethodAdapter mv) {
 
         log(debug,
             trace,
@@ -94,9 +94,9 @@ class HeapNEWINSTANCE extends HeapUtil {
 
     }
 
-    public static void beforeX(boolean debug,
-                               boolean trace,
-                               MethodAdapter mv) {
+    static void beforeX(boolean debug,
+                        boolean trace,
+                        MethodAdapter mv) {
 
         log(debug,
             trace,
@@ -113,9 +113,9 @@ class HeapNEWINSTANCE extends HeapUtil {
 
     }
 
-    public static void afterY(boolean debug,
-                              boolean trace,
-                              MethodAdapter mv) {
+    static void afterY(boolean debug,
+                       boolean trace,
+                       MethodAdapter mv) {
 
         log(debug,
             trace,

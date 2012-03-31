@@ -12,9 +12,9 @@ class HeapCLONEOBJECT extends HeapUtil {
     // visitMethodInsn(INVOKESPECIAL) where they return the reference to the
     // newly allocated object.
 
-    public static void after(boolean debug,
-                             boolean trace,
-                             MethodAdapter mv) {
+    static void after(boolean debug,
+                      boolean trace,
+                      MethodAdapter mv) {
 
         log(debug,
             trace,

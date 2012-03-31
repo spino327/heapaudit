@@ -10,10 +10,10 @@ class HeapCLONEARRAY extends HeapUtil {
     // to visitMethodInsn(INVOKEVIRTUAL) where it returns a reference to the
     // newly allocated array object.
 
-    public static void after(boolean debug,
-                             boolean trace,
-                             MethodAdapter mv,
-                             String owner) {
+    static void after(boolean debug,
+                      boolean trace,
+                      MethodAdapter mv,
+                      String owner) {
 
         log(debug,
             trace,
