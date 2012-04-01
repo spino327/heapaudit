@@ -3,7 +3,7 @@
 This example illustrates HeapAudit statically instrumenting the target code at
 run time.
 
-After building the package, execute the following from the commandline under
+After building the package, execute the following from the command line under
 /target/test-classes/.
 
 	$ java -javaagent:heapaudit.jar=-Icom.foursquare.heapaudit.tutorials.Example@allocateBar.+

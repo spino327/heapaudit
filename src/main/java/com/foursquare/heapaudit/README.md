@@ -11,6 +11,8 @@ roughly organized as follow:
   for instrumentation
 - [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java)
   parses and keeps track of the internal runtime settings
+- [HeapThreaded.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapThreaded.java)
+  implements the instrumentation byte code for extending threaded recorders
 - [HeapUtil.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapUtil.java)
   provides a set of helper utilities for internal use
 - [HeapVariables.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapVariables.java)
