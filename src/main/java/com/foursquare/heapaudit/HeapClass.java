@@ -155,6 +155,9 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
                                    HeapSettings.shouldSuppressAuditing(id,
                                                                        method);
 
+        boolean avoidAuditing = HeapSettings.shouldAvoidAuditing(id,
+                                                                 method);
+
         boolean debugAuditing = HeapSettings.shouldDebugAuditing(id,
                                                                  method);
 
@@ -164,9 +167,14 @@ public class HeapClass extends HeapUtil implements ClassVisitor {
         boolean injectRecorder = HeapSettings.shouldInjectRecorder(id,
                                                                    method);
 
+        boolean threadRecorder = HeapSettings.threaded &&
+                                 id.equals("java/lang/Thread") &&
+                                 name.equals("<init>");
+
         if (!suppressAuditing &&
-            HeapSettings.shouldAvoidAuditing(id, method) &&
-            !injectRecorder) {
+            avoidAuditing &&
+            !injectRecorder &&
+            !threadRecorder) {
 
             return cv.visitMethod(access,
                                   name,

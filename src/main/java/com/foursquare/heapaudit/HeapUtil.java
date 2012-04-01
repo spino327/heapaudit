@@ -495,4 +495,10 @@ public abstract class HeapUtil {
 
     }
 
+    public static void extend(long id) {
+
+        HeapRecorder.extend(id);
+
+    }
+
 }

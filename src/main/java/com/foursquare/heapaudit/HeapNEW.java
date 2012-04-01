@@ -1,11 +1,9 @@
 package com.foursquare.heapaudit;
 
-import java.util.Stack;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.LocalVariablesSorter;
 
 class HeapNEW extends HeapUtil {
 

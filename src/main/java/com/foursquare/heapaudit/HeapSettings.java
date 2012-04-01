@@ -105,6 +105,11 @@ class HeapSettings {
                         HeapSummary test = (HeapSummary)recorderClass.newInstance();
 
                     }
+                    else if (value.startsWith("threaded")) {
+
+                        threaded = true;
+
+                    }
                     else if (value.equals("conditional")) {
 
                         conditional = true;
@@ -159,6 +164,11 @@ class HeapSettings {
     // the dynamic use case.
 
     static int timeout = -1;
+
+    // The threaded setting determines whether to extend all local recorders
+    // from the parent thread to the child thread.
+
+    static boolean threaded = false;
 
     // The conditional setting determines whether to optimize for tradeoffs by
     // adding extra bytecode instructions to check and potentially skip the code

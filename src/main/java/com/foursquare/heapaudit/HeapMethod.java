@@ -347,6 +347,20 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                 }
 
             }
+            else if (owner.equals("java/lang/Thread") &&
+                     name.equals("init")) {
+
+                if (HeapSettings.threaded) {
+
+                    HeapThreaded.before(debugAuditing,
+                                        traceAuditing,
+                                        mv,
+                                        lvs,
+                                        signature);
+
+                }
+
+            }
 
             break;
 
@@ -413,6 +427,18 @@ public class HeapMethod extends HeapUtil implements MethodVisitor {
                 HeapCLONEOBJECT.after(debugAuditing,
                                       traceAuditing,
                                       mv);
+
+            }
+            else if (owner.equals("java/lang/Thread") &&
+                     name.equals("init")) {
+
+                if (HeapSettings.threaded) {
+
+                    HeapThreaded.after(debugAuditing,
+                                       traceAuditing,
+                                       mv);
+
+                }
 
             }
 

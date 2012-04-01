@@ -35,6 +35,7 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             "                    [ -Xtimeout=<milliseconds> ]                                \n" +
             "                    [ -Xoutput=<file> ]                                         \n" +
             "                    [ -Xrecorder=<class>@<jar> ]                                \n" +
+            "                    [ -Xthreaded ]                                              \n" +
             "                    [ -S<path> |                                                \n" +
             "                      -A<path> |                                                \n" +
             "                      -D<path> |                                                \n" +
@@ -56,6 +57,9 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             "                                                                                \n" +
             "* Use -Xrecorder to override the default dynamic recorder with the specified    \n" +
             "  recorder class in the designated jar file.                                    \n" +
+            "                                                                                \n" +
+            "* Use -Xthreaded for dynamic use case to extend all recorders from the parent   \n" +
+            "  thread to the child thread.                                                   \n" +
             "                                                                                \n" +
             "* Use -S to suppress auditing a particular path and its sub calls.              \n" +
             "* Use -A to avoid auditing a particular path.                                   \n" +
@@ -514,9 +518,13 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
         boolean shouldInjectRecorder = HeapSettings.shouldInjectRecorder(className,
                                                                          null);
 
+        boolean shouldThreadRecorder = HeapSettings.threaded &&
+                                       className.equals("java/lang/Thread");
+
         if (shouldSuppressAuditing ||
             !shouldAvoidAuditing ||
-            shouldInjectRecorder) {
+            shouldInjectRecorder ||
+            shouldThreadRecorder) {
 
             ClassReader cr = new ClassReader(classfileBuffer);
 

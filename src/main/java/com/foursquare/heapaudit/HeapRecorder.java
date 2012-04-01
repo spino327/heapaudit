@@ -3,6 +3,7 @@ package com.foursquare.heapaudit;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.instrument.Instrumentation;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HeapRecorder {
@@ -76,11 +77,19 @@ public abstract class HeapRecorder {
 
     private static HeapCollection<HeapRecorder> globalRecorders = new HeapCollection<HeapRecorder>();
 
+    private static ConcurrentHashMap<Long, NestedRecorders> threadedRecorders = new ConcurrentHashMap<Long, NestedRecorders>();
+
     private static ThreadLocal<NestedRecorders> localRecorders = new ThreadLocal<NestedRecorders>() {
 
         @Override protected NestedRecorders initialValue() {
 
-            return new NestedRecorders();
+            // In the event the parent thread wishes to extend all of its local
+            // recorders down to the child thread, the recorders will have been
+            // stashed in threadedRecorders keyed on the child thread id.
+
+            NestedRecorders recorders = threadedRecorders.get(Thread.currentThread().getId());
+
+            return (recorders == null) ? new NestedRecorders() : recorders;
 
         }
 
@@ -99,7 +108,7 @@ public abstract class HeapRecorder {
     }
 
     // The following unwinds the nested calls that suppressed of recordings.
-    // Returns true if caller is the first in the nested sequence.
+    // Returns non-null if caller is the first in the nested sequence.
 
     public static Object unwind() {
 
@@ -114,6 +123,9 @@ public abstract class HeapRecorder {
         return (localRecorders.get().recorders.size() > 0) || (globalRecorders.size() > 0);
 
     }
+
+    // The following retrieves all recorders. The context is obtained by calling
+    // suppress. Caller should call unwind afterwards.
 
     static HeapRecorder[] getRecorders(Object context) {
 
@@ -189,7 +201,7 @@ public abstract class HeapRecorder {
 
         // Registered on the local thread only.
 
-	Local,
+	Local
 
     }
 
@@ -227,12 +239,30 @@ public abstract class HeapRecorder {
 
     }
 
+    // The following is to be called by the parent thread to extend all of its
+    // local recorders down to the child thread.
+
+    static void extend(long id) {
+
+        Object context = suppress();
+
+        NestedRecorders recorders = new NestedRecorders();
+
+        recorders.recorders.addAll(((NestedRecorders)context).recorders);
+
+        threadedRecorders.put(id,
+                              recorders);
+
+        unwind();
+
+    }
+
 }
 
 class NestedRecorders {
 
     public int level = 0;
 
-    public HeapCollection<HeapRecorder> recorders = new HeapCollection<HeapRecorder>();
+    public final HeapCollection<HeapRecorder> recorders = new HeapCollection<HeapRecorder>();
 
 }
