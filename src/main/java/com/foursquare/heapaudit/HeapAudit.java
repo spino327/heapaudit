@@ -336,72 +336,83 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
     // recorders from the target process. 
 
     public static void agentmain(final String args,
-                                 final Instrumentation instrumentation) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, InterruptedException, IOException, MalformedURLException, UnmodifiableClassException {
+                                 final Instrumentation instrumentation) throws Exception {
 
-        initialize(args,
-                   instrumentation);
+        try {
 
-        final HeapAudit agent = new HeapAudit();
+            initialize(args,
+                       instrumentation);
 
-        instrument(agent,
-                   args,
-                   instrumentation);
+            final HeapAudit agent = new HeapAudit();
 
-        Thread cleanup = new Thread() {
+            instrument(agent,
+                       args,
+                       instrumentation);
 
-            @Override public void run() {
+            Thread cleanup = new Thread() {
 
-                try {
+                @Override public void run() {
 
-                    reset(agent,
-                          args,
-                          instrumentation);
+                    try {
+
+                        reset(agent,
+                              args,
+                              instrumentation);
+
+                    }
+                    catch (Exception e) {
+
+                        // Swallow exception but surface the exception information
+                        // in the log output.
+
+                        HeapSettings.output.println(e);
+
+                    }
 
                 }
-                catch (Exception e) {
 
-                    // Swallow exception but surface the exception information
-                    // in the log output.
+            };
 
-                    HeapSettings.output.println(e);
+            // Add shutdown hook to handle the case where the targeting app exited
+            // before the user pressed enter at the command line or before the
+            // timeout expired.
 
-                }
+            Runtime.getRuntime().addShutdownHook(cleanup);
+
+            if (HeapSettings.timeout < 0) {
+
+                // Block on barrier until user hits enter from command line to exit.
+
+                HeapSettings.lock.lock().release();
+
+            }
+            else {
+
+                // Sleep for specified amount of milliseconds and exit.
+
+                Thread.sleep(HeapSettings.timeout);
 
             }
 
-        };
+            // The following logic will not be executed if the targeting app exited
+            // on its own via ctrl-C. If the app exited before the user pressed
+            // enter at the command line or before the timeout expired, then the
+            // reset logic is handled by the shutdown hook.
 
-        // Add shutdown hook to handle the case where the targeting app exited
-        // before the user pressed enter at the command line or before the
-        // timeout expired.
+            Runtime.getRuntime().removeShutdownHook(cleanup);
 
-        Runtime.getRuntime().addShutdownHook(cleanup);
-
-        if (HeapSettings.timeout < 0) {
-
-            // Block on barrier until user hits enter from command line to exit.
-
-            HeapSettings.lock.lock().release();
+            reset(agent,
+                  args,
+                  instrumentation);
 
         }
-        else {
+        catch (Exception e) {
 
-            // Sleep for specified amount of milliseconds and exit.
+            System.err.println(e);
 
-            Thread.sleep(HeapSettings.timeout);
+            throw e;
 
         }
-
-        // The following logic will not be executed if the targeting app exited
-        // on its own via ctrl-C. If the app exited before the user pressed
-        // enter at the command line or before the timeout expired, then the
-        // reset logic is handled by the shutdown hook.
-
-        Runtime.getRuntime().removeShutdownHook(cleanup);
-
-        reset(agent,
-              args,
-              instrumentation);
 
     }
 
@@ -409,24 +420,35 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
     // the target process on the java command line.
 
     public static void premain(String args,
-                               Instrumentation instrumentation) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException, UnmodifiableClassException {
+                               Instrumentation instrumentation) throws Exception {
 
-        initialize(args,
-                   instrumentation);
+        try {
 
-        instrument(new HeapAudit(),
-                   args,
-                   instrumentation);
+            initialize(args,
+                       instrumentation);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+            instrument(new HeapAudit(),
+                       args,
+                       instrumentation);
 
-            @Override public void run() {
+            Runtime.getRuntime().addShutdownHook(new Thread() {
 
-                HeapUtil.dump();
+                @Override public void run() {
 
-            }
+                    HeapUtil.dump();
 
-        });
+                }
+
+            });
+
+        }
+        catch (Exception e) {
+
+            System.err.println(e);
+
+            throw e;
+
+        }
 
     }
 
