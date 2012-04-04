@@ -14,6 +14,10 @@ enough.
 - HYBRID: This launches like the static use case but dynamically determins where
 to inject recorders.
 
+Best way to understand what HeapAudit can do for you is to check out some of the
+sample [tutorials](https://github.com/foursquare/heapaudit/blob/master/src/test/java/com/foursquare/heapaudit/tutorials/)
+and play around with the examples!
+
 ### Building and testing the HeapAudit java agent
 
 Build project with Maven:
@@ -169,11 +173,6 @@ the classes under the jrockit/ namespace causes exception to be thrown during
 startup. We subsequently ran HeapAudit with "-Ajrockit/.+" and everything
 returned back to normal. See [HeapSettings.java](https://github.com/foursquare/heapaudit/blob/master/src/main/java/com/foursquare/heapaudit/HeapSettings.java)
 for list of namespaces avoided by default.
-
-### Tutorials
-
-Check out some of the sample [tutorials](https://github.com/foursquare/heapaudit/blob/master/src/test/java/com/foursquare/heapaudit/tutorials/)
-and play around with the examples!
 
 ### Dependencies
 
