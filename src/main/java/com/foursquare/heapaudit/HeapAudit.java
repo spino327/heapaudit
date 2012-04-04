@@ -116,6 +116,27 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
 
         if (args.length > 0) {
 
+            for (int i = 0; i < args.length; ++i) {
+
+                String arg = args[i].toLowerCase();
+
+                if (arg.equals("?") ||
+                    arg.equals("-?") ||
+                    arg.equals("/?") ||
+                    arg.equals("-h") ||
+                    arg.equals("--help")) {
+
+                    System.out.println("HeapAudit command line syntax\n\n" +
+                                       "> java -jar heapaudit.jar [ <pid> [options] ]\n");
+
+                    help();
+
+                    return;
+
+                }
+
+            }
+
             id = args[0];
 
         }
