@@ -5,9 +5,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class HeapTotal extends HeapSummary {
 
-    private AtomicLong occurrences = new AtomicLong();
+    private final AtomicLong occurrences = new AtomicLong();
 
-    private AtomicLong bytes = new AtomicLong();
+    private final AtomicLong bytes = new AtomicLong();
 
     @Override public void record(String type,
                                  int count,
@@ -21,7 +21,7 @@ public class HeapTotal extends HeapSummary {
 
     @Override public String summarize() {
 
-        return getId() + " x" + registrations.get() + ": " + bytes + " bytes / " + occurrences;
+        return getId() + " x" + registrations.get() + ": " + bytes + " bytes / " + occurrences + " allocs";
 
     }
 

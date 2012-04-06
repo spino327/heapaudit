@@ -14,7 +14,7 @@ public class TestThreaded {
 
     @Test public void Threaded() throws InterruptedException, IOException {
 
-        Process process = Runtime.getRuntime().exec("java -javaagent:" + System.getProperty("javaagent") + "=-Icom.foursquare.heapaudit.tutorials.example5.Threaded@run.+#-Xthreaded -classpath test-classes com/foursquare/heapaudit/tutorials/example5/Threaded");
+        Process process = Runtime.getRuntime().exec("java -javaagent:" + System.getProperty("heapaudit") + "=-Icom.foursquare.heapaudit.tutorials.example5.Threaded@run.+#-Xthreaded -classpath test-classes com/foursquare/heapaudit/tutorials/example5/Threaded");
 
         process.waitFor();
 

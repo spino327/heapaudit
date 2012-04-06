@@ -22,7 +22,7 @@ class HeapSettings {
 
         output = System.out;
 
-        recorderClass = null;
+        recorderClass = HeapQuantile.class;
 
         toSuppressAuditing.clear();
 
@@ -98,11 +98,7 @@ class HeapSettings {
 
                         ClassLoader loader = new URLClassLoader(new URL[] { new URL("file:" + recorder[1]) });
 
-                        recorderClass = loader.loadClass(recorder[0]);
-
-                        // Attempt to instantiate a copy to see if it works.
-
-                        HeapSummary test = (HeapSummary)recorderClass.newInstance();
+                        recorderClass = loader.loadClass(recorder[0]).asSubclass(HeapSummary.class);
 
                     }
                     else if (value.startsWith("threaded")) {
@@ -184,7 +180,7 @@ class HeapSettings {
 
     // The following specifies the class of the dynamically injected recorder.
 
-    static Class<?> recorderClass = null;
+    static Class<? extends HeapSummary> recorderClass = null;
 
     private final static ArrayList<Pattern> toSuppressAuditing = new ArrayList<Pattern>();
 

@@ -422,9 +422,7 @@ public abstract class HeapUtil {
 
         try {
 
-            HeapSummary recorder = (HeapSettings.recorderClass == null) ?
-                new HeapQuantile() :
-                (HeapSummary)HeapSettings.recorderClass.newInstance();
+            HeapSummary recorder = HeapSettings.recorderClass.newInstance();
 
             recorder.setId(id);
 
