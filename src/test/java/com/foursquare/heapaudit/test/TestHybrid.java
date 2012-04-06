@@ -14,7 +14,7 @@ public class TestHybrid {
 
     @Test public void Hybrid() throws InterruptedException, IOException {
 
-        Process process = Runtime.getRuntime().exec("java -javaagent:" + System.getProperty("javaagent") + "=-Icom.foursquare.heapaudit.tutorials.Example@allocateBar.+ -classpath test-classes com/foursquare/heapaudit/tutorials/example4/Hybrid");
+        Process process = Runtime.getRuntime().exec("java -javaagent:" + System.getProperty("javaagent") + "=-Icom.foursquare.heapaudit.tutorials.Example@allocateBar.+ -classpath test-classes com/foursquare/heapaudit/tutorials/example3/Hybrid");
 
         process.waitFor();
 
