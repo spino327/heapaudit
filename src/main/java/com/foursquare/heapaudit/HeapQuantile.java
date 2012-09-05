@@ -120,7 +120,11 @@ public class HeapQuantile extends HeapSummary {
 
     }
 
-    private class Records {
+    protected class Records {
+
+        // Used for identifying the thread id.
+
+        public final long id = Thread.currentThread().getId();
 
         // Used for tracking quantiles stats of non-array types.
 
@@ -132,18 +136,11 @@ public class HeapQuantile extends HeapSummary {
 
         // Register this thread local instance to the global list.
 
-        public Records(ArrayList<Quantiles> statsType,
-                       ArrayList<Quantiles> statsArray) {
+        public Records(ArrayList<Records> threadedRecords) {
 
-            synchronized (statsType) {
+            synchronized (threadedRecords) {
 
-                statsType.add(quantilesType);
-
-            }
-
-            synchronized (statsArray) {
-
-                statsArray.add(quantilesArray);
+                threadedRecords.add(this);
 
             }
 
@@ -161,20 +158,15 @@ public class HeapQuantile extends HeapSummary {
 
     }
 
-    // Collection of stats of the same set of non-array type quantiles for each thread.
+    // Collection of records for each thread.
 
-    private ArrayList<Quantiles> statsType = new ArrayList<Quantiles>();
-
-    // Collection of stats of the same set of array type quantiles for each thread.
-
-    private ArrayList<Quantiles> statsArray = new ArrayList<Quantiles>();
+    protected ArrayList<Records> threadedRecords = new ArrayList<Records>();
 
     private ThreadLocal<Records> stats = new ThreadLocal<Records>() {
 
         @Override protected Records initialValue() {
 
-            return new Records(statsType,
-                               statsArray);
+            return new Records(threadedRecords);
 
         }
 
@@ -213,7 +205,7 @@ public class HeapQuantile extends HeapSummary {
                      int count,
                      long size) {
 
-            this.name = name;
+            this.name = friendly(name);
 
             this.occurrences = occurrences;
 
@@ -265,7 +257,7 @@ public class HeapQuantile extends HeapSummary {
 
         for (Map.Entry<String, HashMap<Integer, Quantile>> s: individual.entrySet()) {
 
-            String type = friendly(s.getKey());
+            String type = s.getKey();
 
             HashMap<Integer, Quantile> quantiles = combined.get(type);
 
@@ -313,8 +305,8 @@ public class HeapQuantile extends HeapSummary {
 
     // The following flattens the quantile statistics into summary format.
 
-    private void flatten(ArrayList<Stats> summary,
-                         Quantiles quantiles) {
+    protected void flatten(ArrayList<Stats> summary,
+                           Quantiles quantiles) {
 
         for (Map.Entry<String, HashMap<Integer, Quantile>> s: quantiles.entrySet()) {
 
@@ -343,23 +335,15 @@ public class HeapQuantile extends HeapSummary {
 
         if (threading == Threading.Global) {
 
-            synchronized (statsType) {
+            synchronized (threadedRecords) {
 
-                for (Quantiles quantiles: statsType) {
+                for (Records records: threadedRecords) {
 
                     merge(qType,
-                          quantiles);
-
-                }
-
-            }
-
-            synchronized (statsArray) {
-
-                for (Quantiles quantiles: statsArray) {
+                          records.quantilesType);
 
                     merge(qArray,
-                          quantiles);
+                          records.quantilesArray);
 
                 }
 
@@ -413,7 +397,7 @@ public class HeapQuantile extends HeapSummary {
 
         }
 
-        return summary;
+        return summary + "\n";
 
     }
 

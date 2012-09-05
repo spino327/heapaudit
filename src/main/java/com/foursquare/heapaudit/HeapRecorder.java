@@ -13,6 +13,14 @@ public abstract class HeapRecorder {
 
     public @Retention(RetentionPolicy.RUNTIME) @interface Suppress { }
 
+    protected void onRegister() {
+
+        registrations.incrementAndGet();
+
+    }
+
+    protected void onUnregister() { }
+
     abstract public void record(String type,
                                 int count,
                                 long size);
@@ -167,6 +175,8 @@ public abstract class HeapRecorder {
 
         recorders.add(recorder);
 
+        recorder.onRegister();
+
         globalRecorders = recorders;
 
     }
@@ -188,6 +198,8 @@ public abstract class HeapRecorder {
         recorders.remove(recorder);
 
         globalRecorders = recorders;
+
+        recorder.onUnregister();
 
     }
 
@@ -215,9 +227,9 @@ public abstract class HeapRecorder {
         }
         else {
 
-            localRecorders.get().recorders.add(recorder);
+            recorder.onRegister();
 
-            recorder.registrations.incrementAndGet();
+            localRecorders.get().recorders.add(recorder);
 
         }
 
@@ -234,6 +246,8 @@ public abstract class HeapRecorder {
         else {
 
             localRecorders.get().recorders.remove(recorder);
+
+            recorder.onUnregister();
 
         }
 
