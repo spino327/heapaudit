@@ -16,8 +16,12 @@ public class HeapThreadedQuantile extends HeapQuantile {
 
             AtomicInteger counter = new AtomicInteger();
 
-            allRegistrations.put(Thread.currentThread().getId(),
-                                 counter);
+            synchronized (allRegistrations) {
+
+                allRegistrations.put(Thread.currentThread().getId(),
+                                     counter);
+
+            }
 
             return counter;
 
@@ -37,31 +41,35 @@ public class HeapThreadedQuantile extends HeapQuantile {
 
         String summary = "";
 
-        synchronized (registrations) {
+        synchronized (allRegistrations) {
 
-            synchronized (threadedRecords) {
+            synchronized (registrations) {
 
-                for (Records records: threadedRecords) {
+                synchronized (threadedRecords) {
 
-                    summary += "HEAP: " + getId() + " x" + allRegistrations.get(records.id) + " @" + records.id;
+                    for (Records records: threadedRecords) {
 
-                    ArrayList<Stats> sQuantiles = new ArrayList<Stats>();
+                        summary += "HEAP: " + getId() + " x" + allRegistrations.get(records.id) + " @" + records.id;
 
-                    flatten(sQuantiles,
-                            records.quantilesType);
+                        ArrayList<Stats> sQuantiles = new ArrayList<Stats>();
 
-                    flatten(sQuantiles,
-                            records.quantilesArray);
+                        flatten(sQuantiles,
+                                records.quantilesType);
 
-                    Collections.sort(sQuantiles);
+                        flatten(sQuantiles,
+                                records.quantilesArray);
 
-                    for (Stats s: sQuantiles) {
+                        Collections.sort(sQuantiles);
 
-                        summary += "\n      - " + s.toString();
+                        for (Stats s: sQuantiles) {
+
+                            summary += "\n      - " + s.toString();
+
+                        }
+
+                        summary += "\n";
 
                     }
-
-                    summary += "\n";
 
                 }
 
