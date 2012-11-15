@@ -11,8 +11,8 @@ and the callback code is only executed when the java agent is loaded.
 heap allocations to stdout when removed. Be aware, a lot of recorders, including
 nested ones, may be injected if the supplied matching pattern is not restrictive
 enough.
-- HYBRID: This launches like the static use case but dynamically determins where
-to inject recorders.
+- HYBRID: This launches like the static use case but dynamically determines
+where to inject recorders.
 
 Best way to understand what HeapAudit can do for you is to check out some of the
 sample [tutorials](https://github.com/foursquare/heapaudit/blob/master/src/test/java/com/foursquare/heapaudit/tutorials/)

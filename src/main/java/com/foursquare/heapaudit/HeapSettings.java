@@ -12,11 +12,19 @@ import java.util.Arrays;
 
 class HeapSettings {
 
-    static void parse(String args) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException {
+    // The synchronized keyword is used on the parse method mostly to enforce a
+    // memory barrier across all of the global variables being set in the parse
+    // logic.
+
+    static synchronized void parse(String args) throws ClassNotFoundException, FileNotFoundException, IllegalAccessException, InstantiationException, MalformedURLException {
 
         timeout = -1;
 
+        threaded = false;
+
         conditional = false;
+
+        enabled = true;
 
         lock = null;
 
@@ -72,7 +80,7 @@ class HeapSettings {
 
                 }
 
-                String value = (arg.length() > 2) ? arg.substring(2) : null;
+                final String value = (arg.length() > 2) ? arg.substring(2) : null;
 
                 switch (arg.charAt(1)) {
 
@@ -101,7 +109,7 @@ class HeapSettings {
                         recorderClass = loader.loadClass(recorder[0]).asSubclass(HeapSummary.class);
 
                     }
-                    else if (value.startsWith("threaded")) {
+                    else if (value.equals("threaded")) {
 
                         threaded = true;
 
@@ -109,6 +117,43 @@ class HeapSettings {
                     else if (value.equals("conditional")) {
 
                         conditional = true;
+
+                    }
+                    else if (value.startsWith("delay=")) {
+
+                        // NOTE: The enabled variable is NOT declared volatile.
+                        // The synchronized keyword surrounding setting the
+                        // enabled variable causes the compiler to insert memory
+                        // barriers before and after modifying the value, thus
+                        // flushing the change across threads on all processors.
+
+                        enabled = false;
+
+                        Thread thread = new Thread() {
+
+                            public void run() {
+
+                                try {
+
+                                    sleep(Long.parseLong(value.substring(6)));
+
+                                } catch (java.lang.InterruptedException e) {
+
+                                    output.println(e);
+
+                                }
+
+                                synchronized (this) {
+
+                                    HeapSettings.enabled = true;
+
+                                }
+
+                            }
+
+                        };
+
+                        thread.start();
 
                     }
 
@@ -173,6 +218,11 @@ class HeapSettings {
     // false can avoid the checks.
 
     static boolean conditional = false;
+
+    // The enabled setting determines whether to send the allocations to the
+    // recorders.
+
+    static boolean enabled = true;
 
     static FileChannel lock = null;
 

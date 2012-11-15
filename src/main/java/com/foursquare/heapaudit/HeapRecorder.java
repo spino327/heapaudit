@@ -137,21 +137,32 @@ public abstract class HeapRecorder {
 
     static HeapRecorder[] getRecorders(Object context) {
 
-        HeapCollection<HeapRecorder> localRecorders = ((NestedRecorders)context).recorders;
+        HeapRecorder[] recorders;
 
-        HeapRecorder[] recorders = new HeapRecorder[globalRecorders.size() + localRecorders.size()];
+        if (HeapSettings.enabled) {
 
-        int index = 0;
+            HeapCollection<HeapRecorder> localRecorders = ((NestedRecorders)context).recorders;
 
-        for (HeapRecorder recorder: globalRecorders) {
+            recorders = new HeapRecorder[globalRecorders.size() + localRecorders.size()];
 
-            recorders[index++] = recorder;
+            int index = 0;
+
+            for (HeapRecorder recorder: globalRecorders) {
+
+                recorders[index++] = recorder;
+
+            }
+
+            for (HeapRecorder recorder: localRecorders) {
+
+                recorders[index++] = recorder;
+
+            }
 
         }
+        else {
 
-        for (HeapRecorder recorder: localRecorders) {
-
-            recorders[index++] = recorder;
+            recorders = new HeapRecorder[0];
 
         }
 
