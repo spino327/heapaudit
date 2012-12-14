@@ -3,6 +3,14 @@
 The following lists feature changes that affect the usage of HeapAudit
 or important bug fixes.
 
+### 1.1.4
+
+- Add -Xdelay command line arg
+
+### 1.1.3
+
+- Add threaded quantile recorder
+
 ### 1.1.2
 
 - Add experimental threaded recorders
