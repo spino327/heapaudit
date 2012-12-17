@@ -15,11 +15,43 @@ public abstract class HeapRecorder {
 
     protected void onRegister() {
 
-        registrations.incrementAndGet();
+        NestedRecorders context = localRecorders.get();
+
+        if (HeapSettings.enabled &&
+            context.delay == 0) {
+
+            registrations.incrementAndGet();
+
+        }
+        else if (context.delay++ == 0) {
+
+            // This is the bottom-most stack frame on this thread's callstack
+            // where the overall status is detected as disabled. Bump the
+            // suppress level one extra time such that all allocations made in
+            // the children frames will not get recorded.
+
+            context.level++;
+
+        }
 
     }
 
-    protected void onUnregister() { }
+    protected void onUnregister() {
+
+        NestedRecorders context = localRecorders.get();
+
+        if (context.delay > 0 &&
+            --context.delay == 0) {
+
+            // This is the bottom-most stack frame on this thread's callstack
+            // where the overall status was detected as disabled. Unwind the
+            // suppress level one extra time.
+
+            --context.level;
+
+        }
+
+    }
 
     abstract public void record(String type,
                                 int count,
@@ -137,32 +169,21 @@ public abstract class HeapRecorder {
 
     static HeapRecorder[] getRecorders(Object context) {
 
-        HeapRecorder[] recorders;
+        HeapCollection<HeapRecorder> localRecorders = ((NestedRecorders)context).recorders;
 
-        if (HeapSettings.enabled) {
+        HeapRecorder[] recorders = new HeapRecorder[globalRecorders.size() + localRecorders.size()];
 
-            HeapCollection<HeapRecorder> localRecorders = ((NestedRecorders)context).recorders;
+        int index = 0;
 
-            recorders = new HeapRecorder[globalRecorders.size() + localRecorders.size()];
+        for (HeapRecorder recorder: globalRecorders) {
 
-            int index = 0;
-
-            for (HeapRecorder recorder: globalRecorders) {
-
-                recorders[index++] = recorder;
-
-            }
-
-            for (HeapRecorder recorder: localRecorders) {
-
-                recorders[index++] = recorder;
-
-            }
+            recorders[index++] = recorder;
 
         }
-        else {
 
-            recorders = new HeapRecorder[0];
+        for (HeapRecorder recorder: localRecorders) {
+
+            recorders[index++] = recorder;
 
         }
 
@@ -285,6 +306,16 @@ public abstract class HeapRecorder {
 }
 
 class NestedRecorders {
+
+    // The following represents a counting delay registration for recorders on
+    // the local thread. Any value greater than 0 indicates registrations on the
+    // local thread will be skipped.
+
+    public int delay = 0;
+
+    // The following represents a counting suppression for recording allocations
+    // on the local thread. Any value greater than 0 indicates the recording on
+    // the local thread will be skipped.
 
     public int level = 0;
 

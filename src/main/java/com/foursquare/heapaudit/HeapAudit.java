@@ -62,7 +62,8 @@ public class HeapAudit extends HeapUtil implements ClassFileTransformer {
             "* Use -Xthreaded for dynamic use case to extend all recorders from the parent   \n" +
             "  thread to the child thread.                                                   \n" +
             "                                                                                \n" +
-            "* Use -Xdelay to delay recording by the specified amount of milliseconds.       \n" +
+            "* Use -Xdelay to delay registering recorders by the specified amount of         \n" +
+            "  milliseconds.                                                                 \n" +
             "                                                                                \n" +
             "* Use -S to suppress auditing a particular path and its sub calls.              \n" +
             "* Use -A to avoid auditing a particular path.                                   \n" +
