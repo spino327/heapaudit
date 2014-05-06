@@ -448,7 +448,7 @@ public abstract class HeapUtil {
 
     }
 
-    static void dump() {
+    public synchronized static void dump() {
 
         for (HeapSummary recorder: recorders.values()) {
 
@@ -457,7 +457,6 @@ public abstract class HeapUtil {
         }
 
         recorders.clear();
-
     }
 
     public static void register(String id) {

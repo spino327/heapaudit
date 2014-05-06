@@ -1,5 +1,7 @@
 # HeapAudit
 
+Maintained by spino327
+
 HeapAudit is a java agent which audits heap allocations for JVM processes.
 
 HeapAudit runs in three modes:

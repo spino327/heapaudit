@@ -14,6 +14,7 @@ public class Custom extends Example {
 
         allocateBar();
 
+        allocatedC();
     }
 
 }

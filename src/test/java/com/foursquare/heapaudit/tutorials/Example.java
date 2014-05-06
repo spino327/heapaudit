@@ -25,5 +25,10 @@ public abstract class Example {
         Bar b = new Bar();
 
     }
+    
+    protected static void allocatedC() {
+    	byte[] array = new byte[1024];
+    	int[] array2 = new int[1024];
+    }
 
 }

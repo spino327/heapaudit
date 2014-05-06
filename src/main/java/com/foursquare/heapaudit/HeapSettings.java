@@ -10,7 +10,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-class HeapSettings {
+public class HeapSettings {
 
     // The synchronized keyword is used on the parse method mostly to enforce a
     // memory barrier across all of the global variables being set in the parse
@@ -226,7 +226,7 @@ class HeapSettings {
 
     static FileChannel lock = null;
 
-    static PrintStream output = System.out;
+    public static PrintStream output = System.out;
 
     // The following specifies the class of the dynamically injected recorder.
 
